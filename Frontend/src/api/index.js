@@ -21,7 +21,7 @@ const apiClient = axios.create({
 // );
 
 apiClient.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
+  const token = useAuthStore.getState().accessToken;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -31,6 +31,11 @@ apiClient.interceptors.request.use((config) => {
 const loginAdmin = async (data) => {
   const response = await apiClient.post("/admin/login", data);
   return response.data;
+};
+
+const verifyUser = async () => {
+  const response = await apiClient.get("/admin/");
+  return response.data.data.user;
 };
 
 const getSectionDetails = async () => {
@@ -90,6 +95,7 @@ const submitAttendance = async (sectionId, lectureId, data) => {
 
 export {
   loginAdmin,
+  verifyUser,
   getSectionDetails,
   getSectionStudents,
   getSectionLectures,
