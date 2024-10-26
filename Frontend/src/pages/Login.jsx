@@ -13,17 +13,18 @@ export const Login = () => {
   });
 
   const store = useAuthStore();
-  const { accessToken, userRole, isAuthenticated, loginUser, logout } = store;
+  const { loginUser, accessToken, isAuthenticated } = store;
 
   useEffect(() => {
-    console.log("User Data::", accessToken, userRole, isAuthenticated);
-  }, [accessToken, userRole, isAuthenticated]);
+    if (accessToken && isAuthenticated) {
+      window.location.assign("/");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await loginUser(adminData);
-      console.log("User Data::", accessToken, userRole, isAuthenticated);
     } catch (error) {
       console.log("Error :: Admin Login ::", error);
     }
