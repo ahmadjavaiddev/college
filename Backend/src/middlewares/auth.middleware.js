@@ -32,7 +32,7 @@ const verifyJWTUser = asyncHandler(async (req, res, next) => {
         const user = await User.findOne({
             _id: decodedToken?._id,
             role: decodedToken?.role,
-        });
+        }).select("-password -refreshToken -lectures -updatedAt -__v");
         if (!user) {
             throw new ApiError(401, "Invalid User Identity");
         }
