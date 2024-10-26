@@ -52,21 +52,23 @@ const loginAdmin = asyncHandler(async (req, res) => {
         "-password -refreshToken -lectures -updatedAt -__v"
     );
 
-    return res
-        .cookie("accessToken", accessToken, cookieOptions)
-        .cookie("refreshToken", refreshToken, cookieOptions)
-        .status(200)
-        .json(
-            new ApiResponse(
-                200,
-                {
-                    admin: loggedInUser,
-                    accessToken: accessToken,
-                    refreshToken: refreshToken,
-                },
-                "Admin Logged In Successfully!"
+    return (
+        res
+            // .cookie("accessToken", accessToken, cookieOptions)
+            // .cookie("refreshToken", refreshToken, cookieOptions)
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    {
+                        admin: loggedInUser,
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                    },
+                    "Admin Logged In Successfully!"
+                )
             )
-        );
+    );
 });
 
 const getAdmin = asyncHandler(async (req, res) => {
@@ -81,6 +83,19 @@ const getAdmin = asyncHandler(async (req, res) => {
         })
         .select("-password -refreshToken -lectures -updatedAt -__v");
 
+    if (!user) {
+        throw new ApiError(404, "Admin not found!");
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, { user: user }, "Admin fetched successfully")
+        );
+});
+
+const verifyUser = asyncHandler(async (req, res) => {
+    const user = req.user;
     if (!user) {
         throw new ApiError(404, "Admin not found!");
     }
@@ -125,4 +140,4 @@ const updateAdmin = asyncHandler(async (req, res) => {
         );
 });
 
-export { registerAdmin, loginAdmin, getAdmin, updateAdmin };
+export { registerAdmin, loginAdmin, getAdmin, verifyUser, updateAdmin };
