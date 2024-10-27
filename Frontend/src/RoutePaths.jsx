@@ -10,6 +10,8 @@ import AddSection from "./pages/Admin/Sections/AddSection";
 import { Login } from "./pages/Login";
 import AttendanceMarker from "./pages/Admin/Attendance/Attendance";
 import { ProtectedRoute } from "./layouts/ProtectedRoute";
+import TeacherProfile from "./pages/Admin/Teacher/TeacherProfile";
+import { AddTeacher } from "./pages/Admin/Teacher/AddTeacher";
 
 const RoutePaths = () => {
   return (
@@ -18,6 +20,16 @@ const RoutePaths = () => {
         <Route path="/" element={<PageLayout />}>
           <Route index element={<HomePage />} />
           <Route path="/login" element={<Login />} />
+          <Route
+            path="/teachers/add"
+            element={<ProtectedRoute role={["ADMIN"]} element={AddTeacher} />}
+          />
+          <Route
+            path="/teachers/:teacherId"
+            element={
+              <ProtectedRoute role={["ADMIN"]} element={TeacherProfile} />
+            }
+          />
           <Route
             path="/sections/:sectionId/attendance/:lectureId"
             element={<AttendanceMarker />}
