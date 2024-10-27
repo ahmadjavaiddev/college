@@ -35,7 +35,7 @@ app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/students", studentRouter);
 app.use("/api/v1/branch", branchRouter);
 app.use("/api/v1/sections", sectionRouter);
-app.use("/api/v1/teacher", teacherRouter);
+app.use("/api/v1/teachers", teacherRouter);
 app.use("/api/v1/lectures", lectureRouter);
 app.use("/api/v1/attendance", attendanceRouter);
 app.use("/api/v1/year", yearRouter);
