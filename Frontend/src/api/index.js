@@ -57,7 +57,6 @@ const getSectionLectures = async () => {
 
 const addStudentRequest = async (data) => {
   const response = await apiClient.post("/students/register", data);
-  console.log("Student ::", response.data);
   return response.data;
 };
 
@@ -89,7 +88,11 @@ const submitAttendance = async (sectionId, lectureId, data) => {
     lectureId,
     attendanceRecords: data,
   });
-  console.log("response.data ::", response.data);
+  return response.data;
+};
+
+const addTeacherRequest = async (data) => {
+  const response = await apiClient.post("/teachers/register", data);
   return response.data;
 };
 
@@ -105,4 +108,5 @@ export {
   getStudentData,
   getLectureData,
   submitAttendance,
+  addTeacherRequest,
 };
