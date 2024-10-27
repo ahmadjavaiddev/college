@@ -2,31 +2,31 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import {
-    cryptoTokenVerify,
-    generateAccessAndRefreshTokens,
-    verificationUrl,
-} from "../utils/index.js";
+import { generateAccessAndRefreshTokens } from "../utils/index.js";
 import { cookieOptions } from "../constants.js";
 import { Branch } from "../models/branch.model.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const registerTeacher = asyncHandler(async (req, res) => {
-    const { name, email, password, subject, branch } = req.body;
+    const { firstName, lastName, email, subject } = req.body;
 
     const existingTeacher = await User.findOne({ email });
     if (existingTeacher) {
         throw new ApiError(409, "Teacher with email already exists");
     }
 
+    const cloudinaryResponse = await uploadOnCloudinary(req.file.path);
     const teacher = await User.create({
-        name,
+        firstName,
+        lastName,
         email,
-        password,
+        password: "123",
         subject,
-        branch,
+        branch: req.user.branch,
         role: "TEACHER",
+        image: cloudinaryResponse.secure_url,
     });
-    await Branch.findByIdAndUpdate(branch, {
+    await Branch.findByIdAndUpdate(req.user.branch, {
         $push: { teachers: teacher._id },
     });
 

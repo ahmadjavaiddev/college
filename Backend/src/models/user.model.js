@@ -24,7 +24,9 @@ const UserSchema = new mongoose.Schema(
         year: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Year",
-            required: true,
+            required: function () {
+                return this.role !== "ADMIN" && this.role !== "TEACHER";
+            },
         },
         role: {
             type: String,
@@ -34,9 +36,6 @@ const UserSchema = new mongoose.Schema(
         branch: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Branch",
-            required: function () {
-                return this.role !== "ADMIN" && this.role !== "STUDENT";
-            },
         },
         section: {
             type: mongoose.Schema.Types.ObjectId,
