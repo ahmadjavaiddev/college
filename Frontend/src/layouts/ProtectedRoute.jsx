@@ -5,7 +5,8 @@ import { useLoadingStore } from "../app/LoadingStore";
 import Loading from "../components/Admin/Loading";
 
 const ProtectedRoute = ({ element: Component, role, ...rest }) => {
-  const { accessToken, userRole, isAuthenticated, verify } = useAuthStore();
+  const { accessToken, userRole, isAuthenticated, verify, logout } =
+    useAuthStore();
   const { isLoading, setLoading } = useLoadingStore();
 
   useEffect(() => {
@@ -17,6 +18,7 @@ const ProtectedRoute = ({ element: Component, role, ...rest }) => {
         setLoading(false);
       } catch (error) {
         console.error("ProtectedRoute error:", error);
+        logout();
         window.location.assign("/login");
       }
     })();
