@@ -22,7 +22,7 @@ const Header = () => {
           <nav className="flex items-center space-x-6">
             <Link to={"/"}>Dashboard</Link>
             <Link to={"/sections"}>Sections</Link>
-            <Link to={"/sections/csb-34"}>CSB-34</Link>
+            <Link to={"/sections/66ffd8503e20756aec48195a"}>CSB-34</Link>
             <Link to={"/sections/add"}>Add Section</Link>
             <Link to={"/teachers/add"}>Add Teacher</Link>
             <Link to={"/teachers/233401"}>Teacher</Link>
