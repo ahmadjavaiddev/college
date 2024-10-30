@@ -36,7 +36,7 @@ const RoutePaths = () => {
           />
           <Route path="/sections" element={<Sections />} />
           <Route
-            path="/sections/:sectionName"
+            path="/sections/:sectionId"
             element={<ProtectedRoute role={["ADMIN"]} element={SectionPage} />}
           />
           <Route
