@@ -168,7 +168,10 @@ const getSectionStudents = asyncHandler(async (req, res) => {
             },
         },
         {
-            $unwind: "$section",
+            $unwind: {
+                path: "$section",
+                preserveNullAndEmptyArrays: true,
+            },
         },
         {
             $lookup: {
@@ -180,16 +183,43 @@ const getSectionStudents = asyncHandler(async (req, res) => {
             },
         },
         {
-            $unwind: "$year",
+            $unwind: {
+                path: "$year",
+                preserveNullAndEmptyArrays: true,
+            },
+        },
+        {
+            $lookup: {
+                from: "attendances",
+                localField: "_id",
+                foreignField: "studentId",
+                as: "attendance",
+                pipeline: [
+                    {
+                        $project: { records: 1 },
+                    },
+                ],
+            },
+        },
+        {
+            $unwind: {
+                path: "$attendance",
+                preserveNullAndEmptyArrays: true,
+            },
         },
         {
             $project: {
                 firstName: 1,
                 lastName: 1,
                 email: 1,
-                section: 1,
+                section: {
+                    name: 1,
+                },
                 image: 1,
-                year: 1,
+                year: {
+                    name: 1,
+                },
+                attendance: 1,
             },
         },
     ]);
@@ -198,15 +228,44 @@ const getSectionStudents = asyncHandler(async (req, res) => {
         throw new ApiError(401, "Students not found!");
     }
 
-    return res
-        .status(200)
-        .json(
-            new ApiResponse(
-                200,
-                { students: students },
-                "Students fetched successfully!"
-            )
-        );
+    const formattedStudents = students.map((student) => {
+        const { _id, firstName, lastName, email, year, section, image } =
+            student;
+        const length = student.attendance.records.length - 1;
+        const status = student.attendance.records[length].status;
+
+        return {
+            _id,
+            firstName,
+            lastName,
+            email,
+            year: year.name,
+            section: section.name,
+            image,
+            status,
+        };
+    });
+
+    const values = {};
+
+    formattedStudents.forEach((item) => {
+        values[item.status.toLowerCase()] =
+            (values[item.status.toLowerCase()] || 0) + 1;
+    });
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {
+                students: formattedStudents,
+                attendanceDetails: {
+                    ...values,
+                    totalStudents: students.length,
+                },
+            },
+            "Students fetched successfully!"
+        )
+    );
 });
 
 const getLectureStudents = asyncHandler(async (req, res) => {
