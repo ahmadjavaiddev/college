@@ -27,10 +27,14 @@ const useSectionStore = create((set) => ({
           getSectionStudents(sectionId),
           getSectionLectures(sectionId),
         ]);
+      const modifiedDetails = {
+        ...sectionResponse,
+        attendanceDetails: studentsResponse.attendanceDetails,
+      };
 
       set({
-        sectionDetails: sectionResponse,
-        students: studentsResponse,
+        sectionDetails: modifiedDetails,
+        students: studentsResponse.students,
         lectures: lecturesResponse,
         loading: { section: false, students: false, lectures: false },
       });
@@ -42,20 +46,18 @@ const useSectionStore = create((set) => ({
 
   searchStudents: (query, searchBy, studentsList) => {
     if (!query || !searchBy || !studentsList?.length) return [];
-    
+
     const normalizedQuery = query.toLowerCase().trim();
-    
+
     return studentsList.filter((student) => {
-      const fieldValue = student[searchBy]?.toLowerCase() || '';
+      const fieldValue = student[searchBy]?.toLowerCase() || "";
       return fieldValue.includes(normalizedQuery);
     });
   },
 
   filterByStatus: (status, studentsList) => {
     return studentsList.filter(
-      (student) =>
-        student.attendance[student.attendance.length - 1].toUpperCase() ===
-        status.toUpperCase()
+      (student) => student.status.toUpperCase() === status.toUpperCase()
     );
   },
 }));

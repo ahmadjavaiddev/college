@@ -150,7 +150,9 @@ export default function SectionPage() {
                     src={"/placeholder.svg?height=40&width=40"}
                     alt={sectionDetails?.name}
                   />
-                  <AvatarFallback>{sectionDetails?.name}</AvatarFallback>
+                  <AvatarFallback>
+                    {sectionDetails?.name?.split("-")[0]}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
                   <CardTitle className="text-lg">
@@ -192,7 +194,7 @@ export default function SectionPage() {
                     variant="outline"
                     className="text-sm rounded-xl px-3 py-0 mt-1 font-bold"
                   >
-                    {sectionDetails?.totalStudents || 0}
+                    {sectionDetails?.attendanceDetails.totalStudents || 0}
                   </Badge>
                 </div>
                 <div className="flex justify-between">
@@ -201,7 +203,7 @@ export default function SectionPage() {
                     variant="outline"
                     className="text-sm rounded-xl px-3 py-0 mt-1 font-bold bg-[#229588] text-white"
                   >
-                    {sectionDetails?.presentStudents || 0}
+                    {sectionDetails?.attendanceDetails.present || 0}
                   </Badge>
                 </div>
                 <div className="flex justify-between">
@@ -210,7 +212,7 @@ export default function SectionPage() {
                     variant="outline"
                     className="text-sm rounded-xl px-3 py-0 mt-1 font-bold bg-red-600 text-white"
                   >
-                    {sectionDetails?.absentStudents || 0}
+                    {sectionDetails?.attendanceDetails.absent || 0}
                   </Badge>
                 </div>
               </div>
