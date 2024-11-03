@@ -45,14 +45,13 @@ const getSectionDetails = async () => {
 
 const getSectionStudents = async (sectionId) => {
   const response = await apiClient.get(`/students/sections/${sectionId}`);
+  console.log("Response ::", response.data.data.students);
   return response.data.data.students;
 };
 
-const getSectionLectures = async () => {
-  const response = await apiClient.get(
-    "/lectures/sections/66ffd8503e20756aec48195a"
-  );
-  return response.data.data.lectures.lectures;
+const getSectionLectures = async (sectionId) => {
+  const response = await apiClient.get(`/lectures/sections/${sectionId}`);
+  return response.data.data.lectures;
 };
 
 const addStudentRequest = async (data) => {
