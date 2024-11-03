@@ -76,8 +76,8 @@ const getSection = asyncHandler(async (req, res) => {
         {
             $project: {
                 name: 1,
-                incharge: 1,
-                branch: 1,
+                incharge: { name: 1 },
+                branch: { name: 1 },
             },
         },
     ]);
