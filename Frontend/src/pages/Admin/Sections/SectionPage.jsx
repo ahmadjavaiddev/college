@@ -20,6 +20,11 @@ import {
   DialogTitle,
   DialogTrigger,
   Skeleton,
+  Select,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+  SelectItem,
 } from "@/components/ui/index";
 import { RefreshCcw } from "lucide-react";
 import { LectureCard } from "@/components/Admin/LectureCard";
@@ -28,11 +33,16 @@ import { motion } from "framer-motion";
 import SidebarLoading from "@/components/Admin/SidebarLoading";
 import useSectionStore from "@/app/useSectionStore";
 import { useParams } from "react-router-dom";
+import StudentCardLoading from "../../../components/Admin/StudentCardLoading";
 
 export default function SectionPage() {
   const [activeTab, setActiveTab] = useState("students");
   const [studentsStatus, setStudentsStatus] = useState("");
   const [searchedStudents, setSearchedStudents] = useState([]);
+  const [searchBy, setSearchBy] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchError, setSearchError] = useState("");
+  const [noResults, setNoResults] = useState(false);
   const { sectionId } = useParams();
   const {
     sectionDetails,
@@ -41,15 +51,83 @@ export default function SectionPage() {
     loading,
     fetchSectionData,
     searchStudents,
+    filterByStatus,
   } = useSectionStore();
 
   useEffect(() => {
-    fetchSectionData(sectionId);
-  }, [sectionId]);
+    let isSubscribed = true;
+
+    const loadData = async () => {
+      if (isSubscribed) {
+        await fetchSectionData(sectionId);
+      }
+    };
+
+    loadData();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [sectionId, fetchSectionData]);
 
   const handleSearch = (query) => {
-    const response = searchStudents(query, students);
+    setSearchQuery(query);
+    setSearchError("");
+    setNoResults(false);
+
+    if (!query.trim()) {
+      setSearchedStudents([]);
+      return;
+    }
+
+    if (!searchBy) {
+      setSearchError("Please select search criteria first");
+      return;
+    }
+
+    const response = searchStudents(query, searchBy, students);
     setSearchedStudents(response);
+
+    if (response.length === 0) {
+      setNoResults(true);
+    }
+  };
+
+  const handleSearchBy = (value) => {
+    setSearchBy(value);
+    setSearchError("");
+    if (searchQuery) {
+      handleSearch(searchQuery);
+    }
+  };
+
+  const handleFilterStudents = (status) => {
+    if (studentsStatus === status) {
+      setStudentsStatus("");
+      setSearchedStudents([]);
+      return;
+    }
+    setStudentsStatus(status);
+    const response = filterByStatus(status, students);
+    setSearchedStudents(response);
+  };
+
+  const handleClearFilters = () => {
+    setSearchedStudents([]);
+    setStudentsStatus("");
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setSearchBy("");
+    setSearchError("");
+    setNoResults(false);
+    setSearchedStudents([]);
+  };
+
+  const handleTabChange = (value) => {
+    setActiveTab(value);
+    handleClearSearch();
   };
 
   return (
@@ -140,82 +218,99 @@ export default function SectionPage() {
           </CardContent>
         </Card>
         <Card className="px-5 py-3 w-[80%]">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={handleTabChange}>
             <div className="flex justify-between">
               <TabsList>
                 <TabsTrigger value="students">Students</TabsTrigger>
                 <TabsTrigger value="lectures">Lectures</TabsTrigger>
               </TabsList>
-              <Button
-                variant="outline"
-                size="sm"
-                className="mr-2"
-                onClick={() => fetchSectionData(sectionId)}
-              >
-                <RefreshCcw width={18} />
-              </Button>
+              {searchError && (
+                <p className="text-sm text-red-500 mt-1">{searchError}</p>
+              )}
+              <div className="flex gap-2">
+                <Dialog>
+                  <DialogTrigger className="w-full bg-primary text-primary-foreground font-semibold shadow hover:bg-primary/90 h-8 rounded-md px-6 text-xs">
+                    Add New Student
+                  </DialogTrigger>
+                  <DialogContent className="max-w-5xl py-0 pb-5">
+                    <DialogTitle className="w-0 h-0 p-0 m-0 text-sm"></DialogTitle>
+                    <AddStudentComponent
+                      sectionIdToSelect={sectionDetails?._id}
+                    />
+                  </DialogContent>
+                </Dialog>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mr-2"
+                  onClick={() => fetchSectionData(sectionId)}
+                >
+                  <RefreshCcw width={18} />
+                </Button>
+              </div>
             </div>
 
             <TabsContent value="students" className="space-y-4">
               <div className="flex justify-between mt-3 mb-7 px-2">
                 <CardTitle className="text-xl">Students</CardTitle>
                 <div>
-                  {["Present", "Absent", "Leave", "Short Leave"].map(
-                    (status) => (
-                      <Button
-                        key={status}
-                        variant="outline"
-                        className={`mx-1 px-3 py-1 ${
-                          studentsStatus.toLowerCase() ===
-                            status.toLowerCase() && "bg-black text-white"
-                        }`}
-                        onClick={() => setStudentsStatus(status.toLowerCase())}
-                      >
-                        {status}
-                      </Button>
-                    )
-                  )}
+                  {["Present", "Absent", "Leave", "Late"].map((status) => (
+                    <Button
+                      key={status}
+                      variant="outline"
+                      className={`mx-1 px-3 py-1 ${
+                        studentsStatus.toLowerCase() === status.toLowerCase() &&
+                        "bg-black text-white"
+                      }`}
+                      onClick={() => handleFilterStudents(status)}
+                    >
+                      {status}
+                    </Button>
+                  ))}
                   <Button
                     variant="outline"
                     className="mx-1 px-3 py-1"
-                    onClick={() => setStudentsStatus("")}
+                    onClick={() => handleClearFilters()}
                   >
                     Clear
                   </Button>
                 </div>
                 <div>
                   <div className="flex w-full items-center space-x-2">
+                    <Select onValueChange={handleSearchBy} value={searchBy}>
+                      <SelectTrigger className="w-[120px]">
+                        <SelectValue placeholder="Select By" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="firstName">First Name</SelectItem>
+                        <SelectItem value="lastName">Last Name</SelectItem>
+                        <SelectItem value="email">Email</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <Input
                       type="text"
                       placeholder="Search"
+                      value={searchQuery}
                       onChange={(e) => handleSearch(e.target.value)}
                     />
-                    <Dialog>
-                      <DialogTrigger className="w-full bg-primary text-primary-foreground font-semibold shadow hover:bg-primary/90 h-8 rounded-md px-0 text-xs">
-                        Add New Student
-                      </DialogTrigger>
-                      <DialogContent className="max-w-5xl py-0 pb-5">
-                        <DialogTitle className="w-0 h-0 p-0 m-0 text-sm"></DialogTitle>
-                        <AddStudentComponent
-                          sectionIdToSelect={sectionDetails?._id}
-                        />
-                      </DialogContent>
-                    </Dialog>
+                    {(searchQuery || searchBy) && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleClearSearch}
+                      >
+                        Clear
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
-              {studentsStatus && (
-                <div>
-                  Number of
-                  <b className="mx-1">
-                    {studentsStatus.charAt(0).toUpperCase() +
-                      studentsStatus.slice(1)}
-                  </b>
-                  Students are <b>{students.length}</b>
-                </div>
+              {noResults && searchQuery && (
+                <p className="text-lg text-muted-foreground mt-2">
+                  No results found for "{searchQuery}"
+                </p>
               )}
-
-              {loading.studentsLoading ? (
+              {loading.students ? (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -224,28 +319,7 @@ export default function SectionPage() {
                   className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5 mb-3"
                 >
                   {[1, 2, 3, 4, 5].map((item) => (
-                    <Card key={item} className="py-4 px-4">
-                      <div className="flex items-center space-x-4 mb-8">
-                        <Skeleton className="h-12 w-12 rounded-full" />
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-[180px]" />
-                          <Skeleton className="h-4 w-[130px]" />
-                        </div>
-                      </div>
-                      {[1, 2].map((item) => (
-                        <div key={item} className="mb-3">
-                          <div className="flex justify-between mb-2">
-                            <Skeleton className="h-4 w-[150px]" />
-                            <Skeleton className="h-4 w-[100px]" />
-                          </div>
-                          <div className="flex justify-between">
-                            <Skeleton className="h-4 w-[100px]" />
-                            <Skeleton className="h-4 w-[80px]" />
-                          </div>
-                        </div>
-                      ))}
-                      <Skeleton className="mt-2 h-7 w-full" />
-                    </Card>
+                    <StudentCardLoading key={item} />
                   ))}
                 </motion.div>
               ) : (
@@ -256,7 +330,7 @@ export default function SectionPage() {
                   transition={{ duration: 0.3 }}
                   className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5 mb-3"
                 >
-                  {searchedStudents.length > 0
+                  {searchedStudents.length > 0 || studentsStatus
                     ? searchedStudents.map((student) => (
                         <UserCard key={student._id} {...student} />
                       ))
@@ -266,7 +340,6 @@ export default function SectionPage() {
                 </motion.div>
               )}
             </TabsContent>
-
             <TabsContent value="lectures">
               <Tabs defaultValue="monday">
                 <div className="flex justify-center">
@@ -285,7 +358,6 @@ export default function SectionPage() {
                     ))}
                   </TabsList>
                 </div>
-
                 {[
                   "monday",
                   "tuesday",
@@ -304,9 +376,12 @@ export default function SectionPage() {
                     >
                       {lectures
                         .filter((item) => item.day.toLowerCase() === day)
-                        .flatMap((item) => item.subjects)
                         .map((lecture) => (
-                          <LectureCard key={lecture._id} {...lecture} />
+                          <LectureCard
+                            key={lecture?._id}
+                            lecture={lecture}
+                            sectionId={sectionId}
+                          />
                         ))}
                     </motion.div>
                   </TabsContent>

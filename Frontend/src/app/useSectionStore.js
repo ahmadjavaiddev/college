@@ -40,11 +40,22 @@ const useSectionStore = create((set) => ({
     }
   },
 
-  // Search functionality
-  searchStudents: (query, studentsList) => {
-    if (!query) return studentsList;
-    return studentsList.filter((student) =>
-      student.firstName.toLowerCase().includes(query.toLowerCase())
+  searchStudents: (query, searchBy, studentsList) => {
+    if (!query || !searchBy || !studentsList?.length) return [];
+    
+    const normalizedQuery = query.toLowerCase().trim();
+    
+    return studentsList.filter((student) => {
+      const fieldValue = student[searchBy]?.toLowerCase() || '';
+      return fieldValue.includes(normalizedQuery);
+    });
+  },
+
+  filterByStatus: (status, studentsList) => {
+    return studentsList.filter(
+      (student) =>
+        student.attendance[student.attendance.length - 1].toUpperCase() ===
+        status.toUpperCase()
     );
   },
 }));
