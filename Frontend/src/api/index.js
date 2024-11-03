@@ -45,8 +45,7 @@ const getSectionDetails = async () => {
 
 const getSectionStudents = async (sectionId) => {
   const response = await apiClient.get(`/students/sections/${sectionId}`);
-  console.log("Response ::", response.data.data.students);
-  return response.data.data.students;
+  return response.data.data;
 };
 
 const getSectionLectures = async (sectionId) => {
