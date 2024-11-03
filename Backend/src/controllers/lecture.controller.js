@@ -76,20 +76,39 @@ const addLecture = asyncHandler(async (req, res) => {
 const getSectionLectures = asyncHandler(async (req, res) => {
     const { sectionId } = req.params;
 
-    const lectures = await Section.aggregate([
+    const lectures = await Lecture.aggregate([
         {
             $match: {
-                _id: new mongoose.Types.ObjectId(sectionId),
+                section: new mongoose.Types.ObjectId(sectionId),
             },
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "teacher",
+                foreignField: "_id",
+                as: "teacher",
+                pipeline: [
+                    {
+                        $project: {
+                            name: 1,
+                        },
+                    },
+                ],
+            },
+        },
+        {
+            $unwind: "$teacher",
         },
         {
             $project: {
-                lectures: 1,
+                subject: 1,
+                day: 1,
+                time: 1,
+                teacher: 1,
             },
         },
     ]);
-
-    // console.log("lectures ::", lectures[0]);
 
     if (!lectures) {
         throw new ApiError(
@@ -103,7 +122,7 @@ const getSectionLectures = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(
                 200,
-                { lectures: lectures[0] },
+                { lectures: lectures },
                 "Lectures added successfully!"
             )
         );
