@@ -12,6 +12,7 @@ import AttendanceMarker from "./pages/Admin/Attendance/Attendance";
 import { ProtectedRoute } from "./layouts/ProtectedRoute";
 import TeacherProfile from "./pages/Admin/Teacher/TeacherProfile";
 import { AddTeacher } from "./pages/Admin/Teacher/AddTeacher";
+import Lectures from "./pages/Admin/Lectures/Lectures";
 
 const RoutePaths = () => {
   return (
@@ -42,6 +43,10 @@ const RoutePaths = () => {
           <Route
             path="/sections/add"
             element={<ProtectedRoute role={["ADMIN"]} element={AddSection} />}
+          />
+          <Route
+            path="/lectures"
+            element={<ProtectedRoute role={["ADMIN"]} element={Lectures} />}
           />
           <Route
             path="/students"

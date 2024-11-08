@@ -38,8 +38,8 @@ const verifyUser = async () => {
   return response.data.data.user;
 };
 
-const getSectionDetails = async () => {
-  const response = await apiClient.get("/sections/66ffd8503e20756aec48195a");
+const getSectionDetails = async (sectionId) => {
+  const response = await apiClient.get(`/sections/${sectionId}`);
   return response.data.data.section;
 };
 
@@ -94,6 +94,25 @@ const addTeacherRequest = async (data) => {
   return response.data;
 };
 
+const getSections = async () => {
+  const response = await apiClient.get("/sections");
+  return response.data.data.sections;
+};
+
+const updateLecture = async (lectureId, lecture) => {
+  const response = await apiClient.put(`/lectures/${lectureId}`, lecture);
+  return response.data.data.lecture;
+};
+
+const updateSectionLectures = async (sectionId, lectures) => {
+  const response = await apiClient.put(
+    `/lectures/sections/${sectionId}`,
+    lectures
+  );
+  console.log("updateSectionLectures ::", response.data.data);
+  return response.data.data;
+};
+
 export {
   loginAdmin,
   verifyUser,
@@ -107,4 +126,7 @@ export {
   getLectureData,
   submitAttendance,
   addTeacherRequest,
+  getSections,
+  updateLecture,
+  updateSectionLectures,
 };
