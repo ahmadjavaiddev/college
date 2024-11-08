@@ -18,6 +18,7 @@ const registerStudent = asyncHandler(async (req, res) => {
     }
 
     const cloudinaryResponse = await uploadOnCloudinary(req.file.path);
+    console.log("cloudinaryResponse ::", cloudinaryResponse);
     const user = await User.create({
         firstName,
         lastName,
@@ -231,16 +232,16 @@ const getSectionStudents = asyncHandler(async (req, res) => {
     const formattedStudents = students.map((student) => {
         const { _id, firstName, lastName, email, year, section, image } =
             student;
-        const length = student.attendance.records.length - 1;
-        const status = student.attendance.records[length].status;
+        const length = student?.attendance?.records?.length - 1;
+        const status = student?.attendance?.records[length]?.status;
 
         return {
             _id,
             firstName,
             lastName,
             email,
-            year: year.name,
-            section: section.name,
+            year: year?.name,
+            section: section?.name,
             image,
             status,
         };
@@ -249,8 +250,8 @@ const getSectionStudents = asyncHandler(async (req, res) => {
     const values = {};
 
     formattedStudents.forEach((item) => {
-        values[item.status.toLowerCase()] =
-            (values[item.status.toLowerCase()] || 0) + 1;
+        values[item.status?.toLowerCase()] =
+            (values[item?.status?.toLowerCase()] || 0) + 1;
     });
 
     return res.status(200).json(

@@ -6,7 +6,7 @@ import { generateAccessAndRefreshTokens } from "../utils/index.js";
 import { cookieOptions } from "../constants.js";
 
 const registerAdmin = asyncHandler(async (req, res) => {
-    const { name, email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -14,7 +14,8 @@ const registerAdmin = asyncHandler(async (req, res) => {
     }
 
     const user = await User.create({
-        name,
+        firstName,
+        lastName,
         email,
         password,
         role: "ADMIN",
@@ -33,12 +34,11 @@ const registerAdmin = asyncHandler(async (req, res) => {
 
 const loginAdmin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-
+    console.log("email, password ::", email, password);
     const user = await User.findOne({ email });
     if (!user) {
         throw new ApiError(404, "Admin not found!");
     }
-    console.log("user ::", user);
 
     const isValidPassword = await user.isPasswordCorrect(password);
     if (!isValidPassword) {
@@ -51,24 +51,23 @@ const loginAdmin = asyncHandler(async (req, res) => {
     const loggedInUser = await User.findById(user._id).select(
         "-password -refreshToken -lectures -updatedAt -__v"
     );
+    console.log("loggedInUser ::", loggedInUser);
 
-    return (
-        res
-            // .cookie("accessToken", accessToken, cookieOptions)
-            // .cookie("refreshToken", refreshToken, cookieOptions)
-            .status(200)
-            .json(
-                new ApiResponse(
-                    200,
-                    {
-                        admin: loggedInUser,
-                        accessToken: accessToken,
-                        refreshToken: refreshToken,
-                    },
-                    "Admin Logged In Successfully!"
-                )
+    return res
+        .cookie("accessToken", accessToken, cookieOptions)
+        .cookie("refreshToken", refreshToken, cookieOptions)
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                {
+                    admin: loggedInUser,
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
+                },
+                "Admin Logged In Successfully!"
             )
-    );
+        );
 });
 
 const getAdmin = asyncHandler(async (req, res) => {

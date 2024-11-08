@@ -75,6 +75,7 @@ const addLecture = asyncHandler(async (req, res) => {
 
 const getSectionLectures = asyncHandler(async (req, res) => {
     const { sectionId } = req.params;
+    console.log("sectionId ::", sectionId);
 
     const lectures = await Lecture.aggregate([
         {
@@ -82,34 +83,35 @@ const getSectionLectures = asyncHandler(async (req, res) => {
                 section: new mongoose.Types.ObjectId(sectionId),
             },
         },
-        {
-            $lookup: {
-                from: "users",
-                localField: "teacher",
-                foreignField: "_id",
-                as: "teacher",
-                pipeline: [
-                    {
-                        $project: {
-                            name: 1,
-                        },
-                    },
-                ],
-            },
-        },
-        {
-            $unwind: "$teacher",
-        },
-        {
-            $project: {
-                subject: 1,
-                day: 1,
-                time: 1,
-                teacher: 1,
-            },
-        },
+        // {
+        //     $lookup: {
+        //         from: "users",
+        //         localField: "teacher",
+        //         foreignField: "_id",
+        //         as: "teacher",
+        //         pipeline: [
+        //             {
+        //                 $project: {
+        //                     name: 1,
+        //                 },
+        //             },
+        //         ],
+        //     },
+        // },
+        // {
+        //     $unwind: "$teacher",
+        // },
+        // {
+        //     $project: {
+        //         subject: 1,
+        //         day: 1,
+        //         time: 1,
+        //         teacher: 1,
+        //     },
+        // },
     ]);
 
+    console.log("lectures ::", lectures);
     if (!lectures) {
         throw new ApiError(
             409,
@@ -134,15 +136,13 @@ const updateLecture = asyncHandler(async (req, res) => {
         throw new ApiError(401, "Lecture not found!");
     }
 
-    const { name, code, branch } = req.body;
+    const { subject } = req.body;
 
     const lecture = await Lecture.findByIdAndUpdate(
         lectureId,
         {
             $set: {
-                name: name,
-                code: code,
-                branch: branch,
+                subject: subject,
             },
         },
         {
@@ -155,10 +155,41 @@ const updateLecture = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(
                 200,
-                { lecture: lecture },
+                { lecture: lecture, success: true },
                 "Lecture Updated SuccessFully!"
             )
         );
 });
 
-export { addLecture, getSectionLectures, updateLecture };
+const updateSectionLectures = asyncHandler(async (req, res) => {
+    const sectionId = req.params.sectionId;
+    if (!sectionId) {
+        throw new ApiError(401, "sectionId not found!");
+    }
+
+    const lectures = req.body;
+    console.log("lectures ::", lectures);
+    const section = await Section.findByIdAndUpdate(
+        sectionId,
+        {
+            $set: {
+                subject: subject,
+            },
+        },
+        {
+            new: true,
+        }
+    );
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                { section: section },
+                "Lection Updated SuccessFully!"
+            )
+        );
+});
+
+export { addLecture, getSectionLectures, updateLecture, updateSectionLectures };

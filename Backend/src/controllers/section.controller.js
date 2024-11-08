@@ -97,6 +97,28 @@ const getSection = asyncHandler(async (req, res) => {
         );
 });
 
+const getAllSections = asyncHandler(async (req, res) => {
+    const sections = await Section.find({
+        branch: "6727d2f811a3e00c11906416",
+    }).select("name");
+
+    console.log("Sections ::", sections);
+
+    if (!sections || sections.length === 0) {
+        throw new ApiError(401, "No sections found!");
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                { sections },
+                "Sections with lectures fetched successfully!"
+            )
+        );
+});
+
 const getSectionsIds = asyncHandler(async (req, res) => {
     const sections = await Section.find().select(
         "-branch -incharge -lectures -students"
@@ -151,4 +173,10 @@ const updateSection = asyncHandler(async (req, res) => {
         );
 });
 
-export { addSection, getSection, getSectionsIds, updateSection };
+export {
+    addSection,
+    getSection,
+    getAllSections,
+    getSectionsIds,
+    updateSection,
+};

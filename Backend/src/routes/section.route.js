@@ -1,5 +1,6 @@
 import {
     addSection,
+    getAllSections,
     getSection,
     getSectionsIds,
     updateSection,
@@ -25,6 +26,7 @@ router
         verifyUserRole(["ADMIN", "TEACHER", "STUDENT"]),
         updateSection
     );
-router.get("/", verifyJWTUser, verifyUserRole(["ADMIN"]), getSectionsIds);
+router.get("/ids", verifyJWTUser, verifyUserRole(["ADMIN"]), getSectionsIds);
+router.get("/", verifyJWTUser, verifyUserRole(["ADMIN"]), getAllSections);
 
 export { router as sectionRouter };
