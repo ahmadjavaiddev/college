@@ -16,15 +16,8 @@ const SectionSchema = new mongoose.Schema({
     },
     lectures: [
         {
-            day: {
-                type: String,
-            },
-            subjects: [
-                {
-                    subject: String,
-                    time: String,
-                },
-            ],
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Lecture",
         },
     ],
     students: [
@@ -33,26 +26,6 @@ const SectionSchema = new mongoose.Schema({
             ref: "Student",
         },
     ],
-});
-
-SectionSchema.pre("save", function (next) {
-    if (this.lectures.length !== 6) {
-        const Days = [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-        ];
-        while (this.lectures.length !== 6) {
-            this.lectures.push({
-                day: Days[this.lectures.length],
-            });
-        }
-        return next();
-    }
-    next();
 });
 
 const Section = mongoose.model("Section", SectionSchema);
