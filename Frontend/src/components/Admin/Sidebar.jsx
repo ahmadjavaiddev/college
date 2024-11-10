@@ -16,7 +16,7 @@ import {
   Pin,
   PinOff,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const sidebarItems = [
   { icon: Grid, label: "Dashboard", url: "/" },
@@ -97,18 +97,18 @@ export default function Sidebar() {
       <ScrollArea className="flex-1">
         <div className="space-y-2 px-2 flex flex-col">
           {sidebarItems.map((item) => (
-            <Link to={item.url} key={item.label}>
-              <Button
-                key={item.label}
-                variant="ghost"
-                className={`w-full justify-start ${
-                  isExpanded ? "px-4" : "px-2"
-                }`}
-              >
-                <item.icon className="h-5 w-5" />
-                {isExpanded && <span className="ml-2">{item.label}</span>}
-              </Button>
-            </Link>
+            <NavLink
+              to={item.url}
+              key={item.label}
+              className={({ isActive }) =>
+                isActive
+                  ? " flex items-center py-1 px-2 text-base font-semibold rounded-md bg-primary text-primary-foreground shadow hover:bg-primary/90"
+                  : " flex items-center py-1 px-2 text-base font-semibold rounded-md hover:bg-accent hover:text-accent-foreground w-full"
+              }
+            >
+              <item.icon className="h-4 w-4" />
+              {isExpanded && <span className="ml-2">{item.label}</span>}
+            </NavLink>
           ))}
         </div>
       </ScrollArea>
