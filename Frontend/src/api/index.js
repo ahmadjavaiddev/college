@@ -49,8 +49,12 @@ const getSectionStudents = async (sectionId) => {
 };
 
 const getSectionLectures = async (sectionId) => {
-  const response = await apiClient.get(`/lectures/sections/${sectionId}`);
-  return response.data.data.lectures;
+  try {
+    const response = await apiClient.get(`/lectures/sections/${sectionId}`);
+    return response.data.data.lectures;
+  } catch (error) {
+    console.log("Error :: getSectionLectures ::", error.message);
+  }
 };
 
 const addStudentRequest = async (data) => {
@@ -109,8 +113,8 @@ const updateSectionLectures = async (sectionId, lectures) => {
     `/lectures/sections/${sectionId}`,
     lectures
   );
-  console.log("updateSectionLectures ::", response.data.data);
-  return response.data.data;
+  console.log("updateSectionLectures ::", response.data.data.lectures);
+  return response.data.data.lectures;
 };
 
 export {
