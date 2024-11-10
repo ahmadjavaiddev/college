@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../app/AuthStore";
 import { useEffect } from "react";
 import { useLoadingStore } from "../app/LoadingStore";
@@ -8,6 +8,7 @@ const ProtectedRoute = ({ element: Component, role, ...rest }) => {
   const { accessToken, userRole, isAuthenticated, verify, logout } =
     useAuthStore();
   const { isLoading, setLoading } = useLoadingStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -19,7 +20,7 @@ const ProtectedRoute = ({ element: Component, role, ...rest }) => {
       } catch (error) {
         console.error("ProtectedRoute error:", error);
         logout();
-        window.location.assign("/login");
+        navigate("/login");
       }
     })();
   }, [verify, setLoading]);
