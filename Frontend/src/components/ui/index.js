@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogTitle,
   DialogTrigger,
+  DialogOverlay,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -42,6 +43,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export {
   Card,
@@ -59,6 +61,7 @@ export {
   DialogContent,
   DialogTitle,
   DialogTrigger,
+  DialogOverlay,
   Input,
   Button,
   ChartContainer,
@@ -86,4 +89,5 @@ export {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  ScrollArea,
 };
