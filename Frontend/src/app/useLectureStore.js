@@ -1,11 +1,5 @@
 import { create } from "zustand";
-import {
-  getSectionLectures,
-  getSections,
-  updateLecture as updateLectureApi,
-  updateSectionLectures,
-} from "../api";
-import { transformLecturesData } from "../utils";
+import { getSectionLectures, getSections, updateSectionLectures } from "../api";
 
 const useLectureStore = create((set, get) => ({
   lectures: [],
@@ -16,34 +10,25 @@ const useLectureStore = create((set, get) => ({
     sections: false,
   },
   error: null,
+  lectureToEdit: {},
+  showEditLecture: false,
+  selectedSection: "",
+  selectedLecture: "",
+  editingLecture: {},
+  newArrangment: [],
+  showChangesButton: false,
 
-  // Fetch lectures
   fetchLectures: async (sectionId) => {
     try {
       set((state) => ({ loading: { ...state.loading, lectures: true } }));
 
-      // Check if lectures for this section are already cached
-      const currentLectures = get().lectures.filter(
-        (item) => item.section === sectionId
-      );
-
-      if (currentLectures.length > 0) {
-        set({
-          selectedSectionLectures: currentLectures,
-          error: null,
-        });
-        return;
-      }
-
       // Fetch new lectures if not cached
       const response = await getSectionLectures(sectionId);
-      const modifiedLectures = transformLecturesData(response);
-
-      set((state) => ({
-        lectures: [...state.lectures, ...modifiedLectures],
-        selectedSectionLectures: modifiedLectures,
+      set({
+        lectures: [...response],
+        selectedSectionLectures: response,
         error: null,
-      }));
+      });
     } catch (error) {
       set({ error: error.message });
     } finally {
@@ -64,71 +49,61 @@ const useLectureStore = create((set, get) => ({
     }
   },
 
-  // Update lecture
-  updateLecture: async (sectionId, lectureId, lecture) => {
+  updateLectures: async (lectures) => {
     try {
-      set({ loading: { ...get().loading, lectures: true } });
-      const response = await updateLectureApi(lectureId, lecture);
+      const state = get();
+      set({ loading: { ...state.loading, lectures: true } });
+      await updateSectionLectures(state.selectedSection, lectures);
 
-      if (response) {
-        set((state) => {
-          // Update the selectedSectionLectures array
-          const updatedSelectedLectures = state.lectures.map((dayGroup) => {
-            if (dayGroup.section === sectionId) {
-              return {
-                ...dayGroup,
-                lectures: dayGroup.lectures.map((existingLecture) =>
-                  existingLecture._id === lectureId
-                    ? (existingLecture = {
-                        ...existingLecture,
-                        subject: lecture.subject,
-                      })
-                    : existingLecture
-                ),
-              };
-            }
-            return dayGroup;
-          });
-
-          return {
-            selectedSectionLectures: updatedSelectedLectures,
-            error: null,
-          };
-        });
-      }
+      await state.fetchLectures(state.selectedSection);
+      set({ error: null, newArrangment: [], showChangesButton: false });
     } catch (error) {
       set({ error: error.message });
-      throw error;
     } finally {
-      set({ loading: { ...get().loading, lectures: false } });
+      set({ loading: { ...get().loading, sections: false } });
     }
   },
 
-  // Update section lectures arrangement
-  updateSectionLectures: async (sectionId, lectures) => {
-    try {
-      const response = await updateSectionLectures(sectionId, lectures);
+  reorderLectures: (source, destination, sourceDay) => {
+    const state = get();
 
-      // Update both lectures and sections state
-      set((state) => ({
-        lectures: state.lectures.map((sectionLectures) =>
-          sectionLectures.section === sectionId
-            ? { ...sectionLectures, lectures }
-            : sectionLectures
-        ),
-        sections: state.sections.map((section) =>
-          section.id === sectionId
-            ? { ...section, assignedLectures: lectures }
-            : section
-        ),
-      }));
+    const valueToUse =
+      state.newArrangment.length > 0 ? state.newArrangment : state.lectures;
+    console.log("state.newArrangment ::", state.newArrangment);
+    console.log("state.lectures ::", state.lectures);
 
-      return response;
-    } catch (error) {
-      set({ error: error.message });
-      throw error;
-    }
+    const updatedLectures = Array.from(valueToUse);
+    // Filter lectures for the selected section and day
+    const dayLectures = updatedLectures.filter(
+      (lecture) =>
+        lecture.day.toLowerCase() === sourceDay.toLowerCase() &&
+        lecture.section === state.selectedSection
+    );
+
+    // Reorder dayLectures based on drag result
+    const [movedLecture] = dayLectures.splice(source.index, 1);
+    dayLectures.splice(destination.index, 0, movedLecture);
+
+    // Update `order` based on new indices
+    dayLectures.forEach((lecture, index) => {
+      lecture.order = index + 1;
+    });
+
+    const values = valueToUse.filter(
+      (item) =>
+        item.day.toLowerCase() !== sourceDay.toLowerCase() &&
+        item.section == state.selectedSection
+    );
+
+    // Update the store state
+    set({ newArrangment: [...dayLectures, ...values] });
   },
+
+  // ...other functions remain the same
+  setSelectedSection: (sectionId) => set({ selectedSection: sectionId }),
+  setSelectedLecture: (lectureId) => set({ selectedLecture: lectureId }),
+
+  setEditingLecture: (value) => set({ editingLecture: value }),
 }));
 
 export default useLectureStore;
