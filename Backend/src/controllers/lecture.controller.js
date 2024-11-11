@@ -54,20 +54,48 @@ const addLecture = asyncHandler(async (req, res) => {
 const getSectionLectures = asyncHandler(async (req, res) => {
     const { sectionId } = req.params;
 
-    const lectures = await Lecture.find({
-        section: new mongoose.Types.ObjectId(sectionId),
-    }).sort({ order: 1 });
-
-    if (!lectures || lectures.length === 0) {
-        throw new ApiError(404, "No lectures found for the given section");
-    }
+    const lectures = await Lecture.aggregate([
+        {
+            $match: {
+                section: new mongoose.Types.ObjectId(sectionId),
+            },
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "teacher",
+                foreignField: "_id",
+                as: "teacher",
+            },
+        },
+        {
+            $unwind: "$teacher",
+        },
+        {
+            $sort: { order: 1 },
+        },
+        {
+            $project: {
+                section: 1,
+                subject: 1,
+                day: 1,
+                startTime: 1,
+                endTime: 1,
+                order: 1,
+                teacher: {
+                    firstName: 1,
+                    lastName: 1,
+                },
+            },
+        },
+    ]);
 
     return res
         .status(200)
         .json(
             new ApiResponse(
                 200,
-                { lectures: lectures },
+                { lectures: lectures.length > 0 ? lectures : [] },
                 "Lectures fetched successfully!"
             )
         );
@@ -111,25 +139,19 @@ const updateSectionLectures = asyncHandler(async (req, res) => {
     }
 
     const lectures = req.body;
-    // console.log("lectures ::", lectures);
-    const updatedLectures = await Promise.all(
-        lectures.map(async (item) => {
-            return await Lecture.findByIdAndUpdate(
-                item._id,
-                {
-                    $set: {
-                        subject: item?.subject,
-                        order: item?.order,
-                    },
+    const bulkOps = lectures.map((lecture) => ({
+        updateOne: {
+            filter: { _id: lecture._id },
+            update: {
+                $set: {
+                    subject: lecture.subject || "$$ROOT.subject",
+                    order: lecture.order || "$$ROOT.order",
                 },
-                {
-                    new: true,
-                }
-            );
-        })
-    );
+            },
+        },
+    }));
 
-    console.log("updatedLectures ::", updatedLectures);
+    const updatedLectures = await Lecture.bulkWrite(bulkOps);
 
     return res
         .status(200)
@@ -142,4 +164,29 @@ const updateSectionLectures = asyncHandler(async (req, res) => {
         );
 });
 
-export { addLecture, getSectionLectures, updateLecture, updateSectionLectures };
+const deleteLecture = asyncHandler(async (req, res) => {
+    const lectureId = req.params.lectureId;
+    if (!lectureId) {
+        throw new ApiError(401, "lectureId not found!");
+    }
+
+    const lecture = await Lecture.findByIdAndDelete(lectureId);
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                { lectureId: lecture._id, success: true },
+                "Lectures Updated Successfully!"
+            )
+        );
+});
+
+export {
+    addLecture,
+    getSectionLectures,
+    updateLecture,
+    updateSectionLectures,
+    deleteLecture,
+};
