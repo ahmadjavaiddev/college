@@ -1,5 +1,6 @@
 import {
     addLecture,
+    deleteLecture,
     getSectionLectures,
     updateLecture,
     updateSectionLectures,
@@ -19,7 +20,15 @@ router.get(
     verifyUserRole(["ADMIN"]),
     getSectionLectures
 );
-router.put("/sections/:sectionId", updateSectionLectures);
-router.put("/:lectureId", updateLecture);
+router.put(
+    "/sections/:sectionId",
+    verifyJWTUser,
+    verifyUserRole(["ADMIN"]),
+    updateSectionLectures
+);
+router
+    .route("/:lectureId")
+    .put(verifyJWTUser, verifyUserRole(["ADMIN"]), updateLecture)
+    .delete(verifyJWTUser, verifyUserRole(["ADMIN"]), deleteLecture);
 
 export { router as lectureRouter };

@@ -102,8 +102,6 @@ const getAllSections = asyncHandler(async (req, res) => {
         branch: "6727d2f811a3e00c11906416",
     }).select("name");
 
-    console.log("Sections ::", sections);
-
     if (!sections || sections.length === 0) {
         throw new ApiError(401, "No sections found!");
     }
