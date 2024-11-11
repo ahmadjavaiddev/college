@@ -53,8 +53,8 @@ const getSectionStudents = async (sectionId) => {
 
 const getSectionLectures = async (sectionId) => {
     try {
-        const response = await apiClient.get(`/lectures/sections/${sectionId}`);
-        return response.data.data.lectures;
+    const response = await apiClient.get(`/lectures/sections/${sectionId}`);
+    return response.data.data.lectures || [];
     } catch (error) {
         console.log("Error :: API :: getSectionLectures ::", error.message);
     }
@@ -159,6 +159,15 @@ const updateSectionLectures = async (sectionId, lectures) => {
     }
 };
 
+const deleteLecture = async (lectureId) => {
+    try {
+        const response = await apiClient.delete(`/lectures/${lectureId}`);
+        return response.data.data;
+    } catch (error) {
+        console.log("Error :: API :: deleteLecture ::", error.message);
+    }
+};
+
 export {
     loginAdmin,
     verifyUser,
@@ -175,4 +184,5 @@ export {
     getSections,
     updateLecture,
     updateSectionLectures,
+    deleteLecture,
 };
