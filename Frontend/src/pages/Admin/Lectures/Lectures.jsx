@@ -1,64 +1,81 @@
 import { useEffect } from "react";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Button,
-  ScrollArea,
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    Button,
+    ScrollArea,
 } from "@/components/ui/index.js";
 import useLectureStore from "@/app/useLectureStore";
 import LecturesCard from "@/components/Admin/Lectures/LecturesCard";
 import EditLecture from "@/components/Admin/Lectures/EditLecture";
 
 export default function Lectures() {
-  const {
-    fetchLectures,
-    fetchSections,
-    sections,
-    selectedSection,
-    selectedLecture,
-    setSelectedSection,
-    editingLecture,
-    showChangesButton,
-    newArrangment,
-  } = useLectureStore();
+    const {
+        fetchLectures,
+        fetchSections,
+        sections,
+        selectedSection,
+        selectedLecture,
+        setSelectedSection,
+        editingLecture,
+        showChangesButton,
+        newArrangment,
+        setSelectedLecture,
+    } = useLectureStore();
 
-  useEffect(() => {
-    fetchSections();
-  }, []);
+    useEffect(() => {
+        fetchSections();
+    }, []);
 
-  return (
-    <div className="flex h-screen bg-gray-100">
-      <Card className="w-1/4 m-4 overflow-hidden">
-        <CardHeader>
-          <CardTitle>Sections</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-[calc(100vh-8rem)]">
-            {sections.map((section) => (
-              <Button
-                key={section?._id}
-                variant={selectedSection === section?._id ? "default" : "ghost"}
-                className="w-full justify-start mb-2"
-                disabled={
-                  showChangesButton && newArrangment.length > 0 ? true : false
-                }
-                onClick={() => {
-                  setSelectedSection(section?._id);
-                  fetchLectures(section?._id);
-                }}
-              >
-                {section?.name}
-              </Button>
-            ))}
-          </ScrollArea>
-        </CardContent>
-      </Card>
+    const handleSectionSelect = (sectionId) => {
+        setSelectedSection(sectionId);
+        fetchLectures(sectionId);
+        if (selectedSection !== editingLecture.section) {
+            setSelectedLecture(null);
+        }
+    };
 
-      {selectedSection && <LecturesCard />}
+    return (
+        <div className="flex h-screen bg-gray-100">
+            <Card className="w-1/4 m-4 overflow-hidden">
+                <CardHeader>
+                    <CardTitle>Sections</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <ScrollArea className="h-[calc(100vh-8rem)]">
+                        {sections?.map((section) => (
+                            <Button
+                                key={section?._id}
+                                variant={
+                                    selectedSection === section?._id
+                                        ? "default"
+                                        : "ghost"
+                                }
+                                className="w-full justify-start mb-2"
+                                disabled={
+                                    showChangesButton &&
+                                    newArrangment.length > 0
+                                        ? true
+                                        : false
+                                }
+                                onClick={() => {
+                                    handleSectionSelect(section?._id);
+                                }}
+                            >
+                                {section?.name}
+                            </Button>
+                        ))}
+                    </ScrollArea>
+                </CardContent>
+            </Card>
 
-      {editingLecture && selectedSection && selectedLecture && <EditLecture />}
-    </div>
-  );
+            {selectedSection && <LecturesCard />}
+
+            {editingLecture?.section === selectedSection &&
+                selectedSection &&
+                selectedLecture && <EditLecture />}
+        </div>
+    );
 }
