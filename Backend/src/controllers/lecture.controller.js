@@ -7,8 +7,8 @@ import { Section } from "../models/section.model.js";
 import mongoose from "mongoose";
 
 const addLecture = asyncHandler(async (req, res) => {
-    const { teacher, section, subject, day, startTime, endTime, order } =
-        req.body;
+    const { teacher, subject, day } = req.body;
+    const sectionId = req.params.sectionId;
 
     // const existingLecture = await Lecture.findOne({
     //     teacher,
@@ -23,29 +23,66 @@ const addLecture = asyncHandler(async (req, res) => {
     //     );
     // }
 
+    const lastLecture = await Lecture.findOne({ day: "Monday" }).sort({
+        order: -1,
+    });
+
     const lecture = await Lecture.create({
         teacher,
-        section,
+        section: sectionId,
         subject,
         day,
-        startTime,
-        endTime,
-        order,
+        startTime: "asd",
+        endTime: "asd",
+        order: lastLecture ? lastLecture.order + 1 : 1,
     });
     await User.findByIdAndUpdate(teacher, {
         $push: { lectures: lecture._id },
     });
 
-    await Section.findByIdAndUpdate(section, {
+    await Section.findByIdAndUpdate(sectionId, {
         $push: { lectures: lecture._id },
     });
+
+    const response = await Lecture.aggregate([
+        {
+            $match: {
+                _id: lecture._id,
+            },
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "teacher",
+                foreignField: "_id",
+                as: "teacher",
+            },
+        },
+        {
+            $unwind: "$teacher",
+        },
+        {
+            $project: {
+                section: 1,
+                subject: 1,
+                day: 1,
+                startTime: 1,
+                endTime: 1,
+                order: 1,
+                teacher: {
+                    firstName: 1,
+                    lastName: 1,
+                },
+            },
+        },
+    ]);
 
     return res
         .status(200)
         .json(
             new ApiResponse(
                 200,
-                { lecture: lecture },
+                { lecture: response[0], success: true },
                 "Lecture added successfully!"
             )
         );

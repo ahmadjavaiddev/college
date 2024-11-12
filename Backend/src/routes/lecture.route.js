@@ -13,7 +13,12 @@ import {
 
 const router = express.Router();
 
-router.post("/add", verifyJWTUser, verifyUserRole(["ADMIN"]), addLecture);
+router.post(
+    "/:sectionId/add",
+    verifyJWTUser,
+    verifyUserRole(["ADMIN"]),
+    addLecture
+);
 router.get(
     "/sections/:sectionId",
     verifyJWTUser,
