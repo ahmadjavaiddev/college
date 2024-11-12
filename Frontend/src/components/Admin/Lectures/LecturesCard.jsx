@@ -1,5 +1,5 @@
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import {
     Card,
     CardContent,
@@ -8,13 +8,13 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    DialogTrigger,
     Button,
     ScrollArea,
 } from "@/components/ui/index.js";
 import AddLecture from "@/components/Admin/Lectures/AddLecture";
 import useLectureStore from "@/app/useLectureStore";
 import { useEffect } from "react";
+import { useState } from "react";
 
 const LecturesCard = () => {
     const {
@@ -30,6 +30,8 @@ const LecturesCard = () => {
         showChangesButton,
         deleteLecture,
     } = useLectureStore();
+    const [showAddLectureForm, setShowAddLectureForm] = useState(false);
+    const [AddLectureDay, setAddLectureDay] = useState("");
     let lecturesToDsiplay = newArrangment.length > 0 ? newArrangment : lectures;
 
     useEffect(() => {
@@ -86,14 +88,14 @@ const LecturesCard = () => {
                 </CardTitle>
 
                 <div className="flex flex-row gap-3 items-center">
-                    {showChangesButton ? (
+                    {showChangesButton && (
                         <>
                             <Button
                                 size="sm"
                                 className="w-full"
                                 onClick={handleSectionsLectureUpdate}
                             >
-                                Submit Changes
+                                Save Changes
                             </Button>
                             <Button
                                 size="sm"
@@ -104,21 +106,11 @@ const LecturesCard = () => {
                                 Restore
                             </Button>
                         </>
-                    ) : (
-                        <Dialog>
-                            <DialogTrigger asChild>
-                                <PlusCircle className="w-5 h-5 cursor-pointer text-blue-500" />
-                            </DialogTrigger>
-                            <DialogContent className="p-0">
-                                <DialogTitle className="hidden"></DialogTitle>
-                                <AddLecture />
-                            </DialogContent>
-                        </Dialog>
                     )}
                 </div>
             </CardHeader>
             <CardContent>
-                <ScrollArea className="w-full h-[calc(100vh/1)] overflow-auto">
+                <ScrollArea className="w-full h-[100vh] pb-28">
                     <DragDropContext onDragEnd={handleDragEnd}>
                         {[
                             "Monday",
@@ -165,24 +157,30 @@ const LecturesCard = () => {
                                                                     editingLecture?._id
                                                                         ? "bg-black text-white"
                                                                         : " hover:bg-accent hover:text-accent-foreground"
-                                                                } w-full flex justify-between items-center px-3 py-1 mr-3 rounded-md border border-input bg-background shadow-sm`}
-                                                                onClick={() =>
-                                                                    handleLectureClick(
-                                                                        lecture
-                                                                    )
-                                                                }
+                                                                } w-full flex justify-between items-center px-2 py-1 mr-3 rounded-md border border-input bg-background shadow-sm`}
                                                             >
                                                                 <span>
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        className="h-8 rounded-md text-xs px-2 mr-2 -ml-1"
+                                                                        onClick={() =>
+                                                                            handleLectureClick(
+                                                                                lecture
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <Pencil className="w-4 h-4 text-blue-500" />
+                                                                    </Button>
                                                                     {
                                                                         lecture.subject
                                                                     }
                                                                 </span>
+
                                                                 <span>
                                                                     {`${lecture.startTime} - ${lecture.endTime}`}
                                                                     <Button
                                                                         variant="outline"
-                                                                        size="sm"
-                                                                        className="px-2 py-0 ml-2"
+                                                                        className="h-8 rounded-md text-xs px-2 ml-2"
                                                                         onClick={() =>
                                                                             handleDeleteLecture(
                                                                                 lecture._id
@@ -198,6 +196,16 @@ const LecturesCard = () => {
                                                 </Draggable>
                                             ))}
                                         {provided.placeholder}
+                                        <Button
+                                            variant="outline"
+                                            className={`w-full flex justify-center items-center rounded-md border-2 border-dashed border-blue-600 bg-background shadow-sm`}
+                                            onClick={() => {
+                                                setShowAddLectureForm(true);
+                                                setAddLectureDay(day);
+                                            }}
+                                        >
+                                            <Plus className="w-4 h-4 text-blue-600" />
+                                        </Button>
                                     </div>
                                 )}
                             </Droppable>
@@ -205,6 +213,18 @@ const LecturesCard = () => {
                     </DragDropContext>
                 </ScrollArea>
             </CardContent>
+            <Dialog
+                open={showAddLectureForm}
+                onOpenChange={setShowAddLectureForm}
+            >
+                <DialogContent className="p-0">
+                    <DialogTitle className="hidden"></DialogTitle>
+                    <AddLecture
+                        AddLectureDay={AddLectureDay}
+                        setShowAddLectureForm={setShowAddLectureForm}
+                    />
+                </DialogContent>
+            </Dialog>
         </Card>
     );
 };
