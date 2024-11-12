@@ -1,6 +1,6 @@
 import { Calendar as CalendarIcon, Eye as EyeIcon } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/index.js";
+import { Button } from "@/components/ui/index.js";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function ResultCard() {

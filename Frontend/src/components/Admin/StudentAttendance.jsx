@@ -6,18 +6,18 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+} from "@/components/ui/index.js";
+import { Progress } from "@/components/ui/index.js";
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "@/components/ui/index.js";
 import { CalendarIcon, BookOpen, CheckCircle, XCircle } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/index.js";
+import { Calendar } from "@/components/ui/index.js";
+import { Button } from "@/components/ui/index.js";
 
 const generateMonthData = () => {
     return Array.from({ length: 28 }, (_, dayIndex) => ({

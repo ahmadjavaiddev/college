@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/Button";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/index.js";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/index.js";
+import { Badge } from "@/components/ui/index.js";
+import { Button } from "@/components/ui/index.js";
+import { Progress } from "@/components/ui/index.js";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 

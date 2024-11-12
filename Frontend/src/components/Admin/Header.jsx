@@ -1,5 +1,5 @@
 import { ChevronDown, School } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/index.js";
 import {
   DropdownMenu,
   DropdownMenuContent,

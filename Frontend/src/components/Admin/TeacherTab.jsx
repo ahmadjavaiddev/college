@@ -4,9 +4,9 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+} from "@/components/ui/index.js";
+import { Input } from "@/components/ui/index.js";
+import { Button } from "@/components/ui/index.js";
 import { UserCard } from "./UserCard";
 
 const Teacher = [

@@ -9,7 +9,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 import { Avatar, AvatarImage, AvatarFallback } from "./avatar";
 import { Input } from "./input";
 import { Button } from "./button";
-import { ChartContainer } from "./chart";
 import { Badge } from "./badge";
 import {
     Dialog,
@@ -59,8 +58,13 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "./sidebar.tsx";
+import { Progress } from "./progress.tsx";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "./chart.tsx";
 
 export {
+    ChartTooltip,
+    ChartTooltipContent,
+    Progress,
     Card,
     CardDescription,
     CardContent,

@@ -1,5 +1,5 @@
 import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/index.js";
 
 export const description = "A radial chart with stacked sections";
 
