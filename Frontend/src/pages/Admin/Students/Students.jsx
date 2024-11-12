@@ -1,6 +1,6 @@
-import { CardTitle, CardDescription } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+// import { CardTitle, CardDescription } from "@/components/ui/Card";
+import { Input, Button } from "@/components/ui/index.js";
+// import { Button } from "@/components/ui/Button";
 import { UserCard } from "../../../components/Admin/UserCard";
 
 const students = [
@@ -60,7 +60,9 @@ const Students = () => {
             <div className="flex justify-between mb-7">
                 <div>
                     <CardTitle className="text-xl">Students</CardTitle>
-                    <CardDescription>List of all Students in the college.</CardDescription>
+                    <CardDescription>
+                        List of all Students in the college.
+                    </CardDescription>
                 </div>
                 <div>
                     <div className="flex w-full max-w-sm items-center space-x-2">

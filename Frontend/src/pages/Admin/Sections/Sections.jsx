@@ -1,7 +1,12 @@
 import { SectionCard } from "../../../components/Admin/SectionCard";
-import { CardTitle, CardDescription } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import {
+    CardTitle,
+    CardDescription,
+    Input,
+    Button,
+} from "@/components/ui/index.js";
+// import { Input } from "@/components/ui/Input";
+// import { Button } from "@/components/ui/Button";
 // import { UserCard } from "../../components/Admin/UserCard";
 
 const sections = [
@@ -61,7 +66,9 @@ const Sections = () => {
             <div className="flex justify-between mb-7">
                 <div>
                     <CardTitle className="text-xl">Sections</CardTitle>
-                    <CardDescription>List of all Sections in the college.</CardDescription>
+                    <CardDescription>
+                        List of all Sections in the college.
+                    </CardDescription>
                 </div>
                 <div>
                     <div className="flex w-full max-w-sm items-center space-x-2">
