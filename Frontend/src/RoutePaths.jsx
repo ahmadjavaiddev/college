@@ -15,57 +15,93 @@ import { AddTeacher } from "./pages/Admin/Teacher/AddTeacher";
 import Lectures from "./pages/Admin/Lectures/Lectures";
 
 const RoutePaths = () => {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<PageLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/teachers/add"
-            element={<ProtectedRoute role={["ADMIN"]} element={AddTeacher} />}
-          />
-          <Route
-            path="/teachers/:teacherId"
-            element={
-              <ProtectedRoute role={["ADMIN"]} element={TeacherProfile} />
-            }
-          />
-          <Route
-            path="/sections/:sectionId/attendance/:lectureId"
-            element={<AttendanceMarker />}
-          />
-          <Route path="/sections" element={<Sections />} />
-          <Route
-            path="/sections/:sectionId"
-            element={<ProtectedRoute role={["ADMIN"]} element={SectionPage} />}
-          />
-          <Route
-            path="/sections/add"
-            element={<ProtectedRoute role={["ADMIN"]} element={AddSection} />}
-          />
-          <Route
-            path="/lectures"
-            element={<ProtectedRoute role={["ADMIN"]} element={Lectures} />}
-          />
-          <Route
-            path="/students"
-            element={<ProtectedRoute role={["ADMIN"]} element={Students} />}
-          />
-          <Route
-            path="/students/:userId"
-            element={
-              <ProtectedRoute role={["ADMIN"]} element={StudentProfile} />
-            }
-          />
-          <Route
-            path="/students/add"
-            element={<ProtectedRoute role={["ADMIN"]} element={AddStudent} />}
-          />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<PageLayout />}>
+                    <Route index element={<HomePage />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route
+                        path="/teachers/add"
+                        element={
+                            <ProtectedRoute
+                                role={["ADMIN"]}
+                                element={AddTeacher}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/teachers/:teacherId"
+                        element={
+                            <ProtectedRoute
+                                role={["ADMIN"]}
+                                element={TeacherProfile}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/sections/:sectionId/attendance/:lectureId"
+                        element={<AttendanceMarker />}
+                    />
+                    <Route path="/sections" element={<Sections />} />
+                    <Route
+                        path="/sections/:sectionId"
+                        element={
+                            <ProtectedRoute
+                                role={["ADMIN"]}
+                                element={SectionPage}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/sections/add"
+                        element={
+                            <ProtectedRoute
+                                role={["ADMIN"]}
+                                element={AddSection}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/lectures"
+                        element={
+                            <ProtectedRoute
+                                role={["ADMIN"]}
+                                element={Lectures}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/students"
+                        element={
+                            <ProtectedRoute
+                                role={["ADMIN"]}
+                                element={Students}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/students/:userId"
+                        element={
+                            <ProtectedRoute
+                                role={["ADMIN"]}
+                                element={StudentProfile}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/students/add"
+                        element={
+                            <ProtectedRoute
+                                role={["ADMIN"]}
+                                element={AddStudent}
+                            />
+                        }
+                    />
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    );
 };
 
 export default RoutePaths;
