@@ -38,7 +38,7 @@ export default function Lectures() {
     };
 
     return (
-        <div className="flex h-screen bg-gray-100">
+        <div className="flex h-[93vh] bg-gray-100">
             <Card className="w-1/4 m-4 overflow-hidden">
                 <CardHeader>
                     <CardTitle>Sections</CardTitle>
