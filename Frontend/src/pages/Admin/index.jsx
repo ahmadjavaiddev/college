@@ -1,30 +1,30 @@
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import { BookOpen, School, Users } from "lucide-react";
-import { StudentsTab } from "../../components/Admin/studentsTab";
-import TeachersTab from "../../components/Admin/TeacherTab";
-import { SectionsTab } from "../../components/Admin/SectionsTab";
+// import {
+//     Card,
+//     CardContent,
+//     CardDescription,
+//     CardHeader,
+//     CardTitle,
+// } from "@/components/ui/card";
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import {
+//     Table,
+//     TableBody,
+//     TableCell,
+//     TableHead,
+//     TableHeader,
+//     TableRow,
+// } from "@/components/ui/table";
+// import { BookOpen, School, Users } from "lucide-react";
+// import { StudentsTab } from "../../components/Admin/studentsTab";
+// import TeachersTab from "../../components/Admin/TeacherTab";
+// import { SectionsTab } from "../../components/Admin/SectionsTab";
 
 export default function AdminPortal() {
     // const [selectedBranch, setSelectedBranch] = useState("");
 
     return (
         <div className="min-h-screen bg-background">
-            <main className="px-5 py-6">
+            {/* <main className="px-5 py-6">
                 <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
                 <Tabs defaultValue="manage" className="mt-6">
@@ -38,9 +38,12 @@ export default function AdminPortal() {
                     <TabsContent value="manage">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Manage Branches, Teachers, and Students</CardTitle>
+                                <CardTitle>
+                                    Manage Branches, Teachers, and Students
+                                </CardTitle>
                                 <CardDescription>
-                                    Add or edit branches, teachers, and students.
+                                    Add or edit branches, teachers, and
+                                    students.
                                 </CardDescription>
                             </CardHeader>
                             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 px-5 pb-7">
@@ -52,7 +55,9 @@ export default function AdminPortal() {
                                         <School className="h-4 w-4 text-muted-foreground" />
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-2xl font-bold">12</div>
+                                        <div className="text-2xl font-bold">
+                                            12
+                                        </div>
                                     </CardContent>
                                 </Card>
                                 <Card>
@@ -63,7 +68,9 @@ export default function AdminPortal() {
                                         <Users className="h-4 w-4 text-muted-foreground" />
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-2xl font-bold">120</div>
+                                        <div className="text-2xl font-bold">
+                                            120
+                                        </div>
                                     </CardContent>
                                 </Card>
                                 <Card>
@@ -74,7 +81,9 @@ export default function AdminPortal() {
                                         <Users className="h-4 w-4 text-muted-foreground" />
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-2xl font-bold">1,234</div>
+                                        <div className="text-2xl font-bold">
+                                            1,234
+                                        </div>
                                     </CardContent>
                                 </Card>
                                 <Card>
@@ -85,81 +94,13 @@ export default function AdminPortal() {
                                         <BookOpen className="h-4 w-4 text-muted-foreground" />
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-2xl font-bold">450</div>
+                                        <div className="text-2xl font-bold">
+                                            450
+                                        </div>
                                     </CardContent>
                                 </Card>
                             </div>
                         </Card>
-                        {/* <Card>
-                            <CardHeader>
-                                <CardTitle>Manage Branches, Teachers, and Students</CardTitle>
-                                <CardDescription>
-                                    Add or edit branches, teachers, and students.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    <div>
-                                        <Label htmlFor="branch">Select Branch</Label>
-                                        <Select
-                                            value={selectedBranch}
-                                            onValueChange={setSelectedBranch}
-                                        >
-                                            <SelectTrigger id="branch">
-                                                <SelectValue placeholder="Select branch" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="cs">
-                                                    Computer Science
-                                                </SelectItem>
-                                                <SelectItem value="ee">
-                                                    Electrical Engineering
-                                                </SelectItem>
-                                                <SelectItem value="me">
-                                                    Mechanical Engineering
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="grid gap-4">
-                                        <div>
-                                            <Label htmlFor="teacherName">Teacher Name</Label>
-                                            <Input
-                                                id="teacherName"
-                                                placeholder="Enter teacher name"
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="teacherEmail">Teacher Email</Label>
-                                            <Input
-                                                id="teacherEmail"
-                                                placeholder="Enter teacher email"
-                                                type="email"
-                                            />
-                                        </div>
-                                        <Button>Add Teacher</Button>
-                                    </div>
-                                    <div className="grid gap-4">
-                                        <div>
-                                            <Label htmlFor="studentName">Student Name</Label>
-                                            <Input
-                                                id="studentName"
-                                                placeholder="Enter student name"
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="studentEmail">Student Email</Label>
-                                            <Input
-                                                id="studentEmail"
-                                                placeholder="Enter student email"
-                                                type="email"
-                                            />
-                                        </div>
-                                        <Button>Add Student</Button>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card> */}
                     </TabsContent>
                     <TabsContent value="teachers">
                         <TeachersTab />
@@ -188,21 +129,27 @@ export default function AdminPortal() {
                                     </TableHeader>
                                     <TableBody>
                                         <TableRow>
-                                            <TableCell>Data Structures</TableCell>
+                                            <TableCell>
+                                                Data Structures
+                                            </TableCell>
                                             <TableCell>John Doe</TableCell>
                                             <TableCell>CS-A</TableCell>
                                             <TableCell>Monday</TableCell>
                                             <TableCell>09:00 AM</TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell>Circuit Theory</TableCell>
+                                            <TableCell>
+                                                Circuit Theory
+                                            </TableCell>
                                             <TableCell>Jane Smith</TableCell>
                                             <TableCell>EE-B</TableCell>
                                             <TableCell>Tuesday</TableCell>
                                             <TableCell>11:00 AM</TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell>Thermodynamics</TableCell>
+                                            <TableCell>
+                                                Thermodynamics
+                                            </TableCell>
                                             <TableCell>Bob Johnson</TableCell>
                                             <TableCell>ME-C</TableCell>
                                             <TableCell>Wednesday</TableCell>
@@ -217,7 +164,7 @@ export default function AdminPortal() {
                         <SectionsTab />
                     </TabsContent>
                 </Tabs>
-            </main>
+            </main> */}
         </div>
     );
 }
