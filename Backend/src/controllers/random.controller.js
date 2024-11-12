@@ -4,6 +4,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 import { Year } from "../models/year.model.js";
 import { Section } from "../models/section.model.js";
+import { Branch } from "../models/branch.model.js";
+import { User } from "../models/user.model.js";
 
 const getFormData = asyncHandler(async (req, res) => {
     const years = await Year.aggregate([
@@ -31,6 +33,34 @@ const getFormData = asyncHandler(async (req, res) => {
             new ApiResponse(
                 200,
                 { years: years, sections: sections },
+                "years fetched successfully!"
+            )
+        );
+});
+
+const getTeachersFormData = asyncHandler(async (req, res) => {
+    const branchId = req.params.branchId || "6727d2f811a3e00c11906416";
+    const teachers = await User.aggregate([
+        {
+            $match: {
+                role: "TEACHER",
+                branchId: new mongoose.Types.ObjectId(branchId),
+            },
+        },
+        {
+            $project: {
+                firstName: 1,
+                lastName: 1,
+            },
+        },
+    ]);
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                { teachers: teachers },
                 "years fetched successfully!"
             )
         );
@@ -77,4 +107,4 @@ const getYear = asyncHandler(async (req, res) => {
         );
 });
 
-export { getFormData, getYear };
+export { getFormData, getTeachersFormData, getYear };
