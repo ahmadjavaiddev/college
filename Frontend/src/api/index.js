@@ -25,12 +25,7 @@ const loginAdmin = async (data) => {
 };
 
 const verifyUser = async () => {
-    try {
-        const response = await apiClient.get("/admin/");
-        return response.data.data.user;
-    } catch (error) {
-        console.log("Error :: API :: verifyUser ::", error.message);
-    }
+    return apiClient.get("/admin");
 };
 
 const getSectionDetails = async (sectionId) => {
@@ -52,99 +47,65 @@ const getSectionStudents = async (sectionId) => {
 };
 
 const getSectionLectures = async (sectionId) => {
-    try {
-    const response = await apiClient.get(`/lectures/sections/${sectionId}`);
-    return response.data.data.lectures || [];
-    } catch (error) {
-        console.log("Error :: API :: getSectionLectures ::", error.message);
-    }
+    return apiClient.get(`/lectures/sections/${sectionId}`);
 };
 
 const addStudentRequest = async (data) => {
-    try {
-        const response = await apiClient.post("/students/register", data);
-        return response.data;
-    } catch (error) {
-        console.log("Error :: API :: addStudentRequest ::", error.message);
-    }
+    const response = await apiClient.post("/students/register", data);
+    return response.data;
 };
 
 const getFormFieldsData = async () => {
-    try {
-        const response = await apiClient.get("/random/data/form");
-        return response.data.data;
-    } catch (error) {
-        console.log("Error :: API :: getFormFieldsData ::", error.message);
-    }
+    const response = await apiClient.get("/random/data/form");
+    return response.data.data;
 };
 
 const getExistingStudents = async () => {
-    try {
-        const response = await apiClient.get("/students");
-        return response.data.data.students;
-    } catch (error) {
-        console.log("Error :: API :: getExistingStudents ::", error.message);
-    }
+    const response = await apiClient.get("/students");
+    return response.data.data.students;
 };
 
 const getStudentData = async (userId) => {
-    try {
-        const response = await apiClient.get(`/students/${userId}`);
-        return response.data.data.user;
-    } catch (error) {
-        console.log("Error :: API :: getStudentData ::", error.message);
-    }
+    const response = await apiClient.get(`/students/${userId}`);
+    return response.data.data.user;
 };
 
 const getLectureData = async (sectionId) => {
-    try {
-        const response = await apiClient.get(
-            `/students/sections/${sectionId}/lecture`
-        );
-        return response.data.data.students;
-    } catch (error) {
-        console.log("Error :: API :: getLectureData ::", error.message);
-    }
+    const response = await apiClient.get(
+        `/students/sections/${sectionId}/lecture`
+    );
+    return response.data.data.students;
 };
 
 const submitAttendance = async (sectionId, lectureId, data) => {
-    try {
-        const response = await apiClient.post(`/attendance/mark`, {
-            sectionId,
-            lectureId,
-            attendanceRecords: data,
-        });
-        return response.data;
-    } catch (error) {
-        console.log("Error :: API :: submitAttendance ::", error.message);
-    }
+    const response = await apiClient.post(`/attendance/mark`, {
+        sectionId,
+        lectureId,
+        attendanceRecords: data,
+    });
+    return response.data;
 };
 
 const addTeacherRequest = async (data) => {
-    try {
-        const response = await apiClient.post("/teachers/register", data);
-        return response.data;
-    } catch (error) {
-        console.log("Error :: API :: addTeacherRequest ::", error.message);
-    }
+    const response = await apiClient.post("/teachers/register", data);
+    return response.data;
+};
+
+const getTeachersFormData = async () => {
+    return apiClient.get("/random/teachers/form");
 };
 
 const getSections = async () => {
-    try {
-        const response = await apiClient.get("/sections");
-        return response.data.data.sections;
-    } catch (error) {
-        console.log("Error :: API :: getSections ::", error.message);
-    }
+    return apiClient.get("/sections");
 };
 
 const updateLecture = async (lectureId, lecture) => {
-    try {
-        const response = await apiClient.put(`/lectures/${lectureId}`, lecture);
-        return response.data.data.lecture;
-    } catch (error) {
-        console.log("Error :: API :: updateLecture ::", error.message);
-    }
+    const response = await apiClient.put(`/lectures/${lectureId}`, lecture);
+    return response.data.data.lecture;
+};
+
+const addNewLecture = async (sectionId, data) => {
+    return apiClient.post(`/lectures/${sectionId}/add`, data);
 };
 
 const updateSectionLectures = async (sectionId, lectures) => {
@@ -160,12 +121,7 @@ const updateSectionLectures = async (sectionId, lectures) => {
 };
 
 const deleteLecture = async (lectureId) => {
-    try {
-        const response = await apiClient.delete(`/lectures/${lectureId}`);
-        return response.data.data;
-    } catch (error) {
-        console.log("Error :: API :: deleteLecture ::", error.message);
-    }
+    return apiClient.delete(`/lectures/${lectureId}`);
 };
 
 export {
@@ -181,8 +137,10 @@ export {
     getLectureData,
     submitAttendance,
     addTeacherRequest,
+    getTeachersFormData,
     getSections,
     updateLecture,
+    addNewLecture,
     updateSectionLectures,
     deleteLecture,
 };
