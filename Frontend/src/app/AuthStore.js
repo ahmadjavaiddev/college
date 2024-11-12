@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import CryptoJS from "crypto-js";
 import { loginAdmin, verifyUser } from "../api";
+import { requestHandler } from "../utils";
 
 const SECRET_KEY = "your-secret-key"; // Replace with your actual secret key
 
@@ -48,17 +49,19 @@ export const useAuthStore = create(
             userRole: getRole(),
             isAuthenticated: !!getToken(),
             verify: async () => {
-                const response = await verifyUser();
-                if (!response) {
-                    return false;
-                }
-                set({
-                    user: response,
-                    role: response.role,
-                    isAuthenticated: true,
-                });
-                return true;
+                requestHandler(
+                    async () => await verifyUser(),
+                    (res) => {
+                        set({
+                            user: res.user,
+                            role: res.user.role,
+                            isAuthenticated: true,
+                        });
+                    },
+                    null
+                );
             },
+
             loginUser: async (userData) => {
                 const response = await loginAdmin(userData);
                 const role = response.data.admin.role.toUpperCase();
@@ -68,9 +71,9 @@ export const useAuthStore = create(
                 setRole(role);
                 set({ accessToken, userRole: role, isAuthenticated: true });
             },
+
             logout: () => {
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("role");
+                localStorage.clear();
                 set({
                     accessToken: null,
                     userRole: null,
