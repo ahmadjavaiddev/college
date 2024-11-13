@@ -13,6 +13,7 @@ import EditLecture from "@/components/Admin/Lectures/EditLecture";
 
 export default function Lectures() {
     const {
+        loading,
         fetchLectures,
         fetchSections,
         sections,
@@ -45,28 +46,34 @@ export default function Lectures() {
                 </CardHeader>
                 <CardContent>
                     <ScrollArea className="h-[calc(100vh-8rem)]">
-                        {sections?.map((section) => (
-                            <Button
-                                key={section?._id}
-                                variant={
-                                    selectedSection === section?._id
-                                        ? "default"
-                                        : "ghost"
-                                }
-                                className="w-full justify-start mb-2"
-                                disabled={
-                                    showChangesButton &&
-                                    newArrangment.length > 0
-                                        ? true
-                                        : false
-                                }
-                                onClick={() => {
-                                    handleSectionSelect(section?._id);
-                                }}
-                            >
-                                {section?.name}
-                            </Button>
-                        ))}
+                        {loading.sections ? (
+                            <div className="flex justify-center items-center h-full">
+                                <p>Loading...</p>
+                            </div>
+                        ) : (
+                            sections?.map((section) => (
+                                <Button
+                                    key={section?._id}
+                                    variant={
+                                        selectedSection === section?._id
+                                            ? "default"
+                                            : "ghost"
+                                    }
+                                    className="w-full justify-start mb-2"
+                                    disabled={
+                                        showChangesButton &&
+                                        newArrangment.length > 0
+                                            ? true
+                                            : false
+                                    }
+                                    onClick={() => {
+                                        handleSectionSelect(section?._id);
+                                    }}
+                                >
+                                    {section?.name}
+                                </Button>
+                            ))
+                        )}
                     </ScrollArea>
                 </CardContent>
             </Card>
