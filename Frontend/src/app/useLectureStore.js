@@ -6,6 +6,7 @@ import {
     deleteLecture as deleteLectureApi,
     getTeachersFormData,
     addNewLecture as addNewLectureApi,
+    updateLecture,
 } from "../api";
 import { requestHandler } from "../utils";
 
@@ -35,6 +36,7 @@ const useLectureStore = create((set, get) => ({
                 sectionLecturesInState.length > 0 &&
                 get().newArrangment.length === 0
             ) {
+                set({ loading: { lectures: false } });
                 console.log("Lectures already cached!");
                 return;
             }
@@ -48,8 +50,11 @@ const useLectureStore = create((set, get) => ({
                         error: null,
                         newArrangment: [],
                         showChangesButton: false,
+                        loading: { lectures: false },
                     });
-                }
+                },
+                null,
+                "Error while fetching lectures"
             );
         } catch (error) {
             console.log("Error :: fetchLectures ::", error.message);
@@ -62,19 +67,77 @@ const useLectureStore = create((set, get) => ({
         requestHandler(
             async () => await getSections(),
             (res) => {
-                set({ sections: res.sections, error: null });
-            }
+                set({
+                    sections: res.sections,
+                    error: null,
+                    loading: { sections: false },
+                });
+            },
+            null,
+            "Error while fetching sections"
         );
     },
 
     updateLectures: async (lectures) => {
         const state = get();
-        set({ loading: { ...state.loading, lectures: true } });
+        set({ loading: { lectures: true } });
         requestHandler(
             async () =>
-                await updateSectionLectures(state.selectedSection, lectures)
+                await updateSectionLectures(state.selectedSection, lectures),
+            (res) => {
+                if (res.success) {
+                    const filteredValues = [...lectures];
+                    state.lectures.forEach((item) => {
+                        const found = lectures.find(
+                            (value) => value._id === item._id
+                        );
+                        if (!found) {
+                            filteredValues.push(item);
+                        }
+                    });
+
+                    set({
+                        lectures: filteredValues,
+                        loading: { lectures: false },
+                        newArrangment: [],
+                        showChangesButton: false,
+                    });
+                }
+            },
+            "Lectures Updated Successfully!",
+            "Error while updating lectures"
         );
-        await state.fetchLectures(state.selectedSection);
+    },
+
+    updateOneLecture: async () => {
+        const state = get();
+        set({ loading: { lectures: true } });
+        requestHandler(
+            async () =>
+                await updateLecture(
+                    state.editingLecture._id,
+                    state.editingLecture
+                ),
+            (res) => {
+                if (res.success) {
+                    const updateLectrueRemoved = state.lectures.filter(
+                        (item) => item._id !== state.editingLecture._id
+                    );
+                    const updatedLectures = [
+                        ...updateLectrueRemoved,
+                        res.lecture,
+                    ].sort((a, b) => a.order - b.order);
+                    set({
+                        lectures: updatedLectures,
+                        loading: { lectures: false },
+                        editingLecture: {},
+                        selectedLecture: "",
+                    });
+                }
+            },
+            "Lecture Updated Successfully!",
+            "Error while updating lecture"
+        );
     },
 
     deleteLecture: async (lectureId) => {
@@ -88,7 +151,9 @@ const useLectureStore = create((set, get) => ({
                     );
                     set({ lectures: updatedLectures });
                 }
-            }
+            },
+            "Lecture Deleted Successfully!",
+            "Error while deleting lecture"
         );
     },
 
@@ -112,12 +177,15 @@ const useLectureStore = create((set, get) => ({
                     });
                     return true;
                 }
-            }
+            },
+            "Lecture Added Successfully!",
+            "Error while adding lecture"
         );
     },
 
     reorderLectures: (source, destination, sourceDay) => {
         const state = get();
+        set({ editingLecture: {}, selectedLecture: "" });
 
         const valueToUse =
             state.newArrangment.length > 0
