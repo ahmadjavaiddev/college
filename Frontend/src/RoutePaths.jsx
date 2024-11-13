@@ -13,8 +13,28 @@ import { ProtectedRoute } from "./layouts/ProtectedRoute";
 import TeacherProfile from "./pages/Admin/Teacher/TeacherProfile";
 import { AddTeacher } from "./pages/Admin/Teacher/AddTeacher";
 import Lectures from "./pages/Admin/Lectures/Lectures";
+import { useAuthStore } from "./app/AuthStore";
+import { useLoadingStore } from "./app/LoadingStore";
+import { useEffect } from "react";
 
 const RoutePaths = () => {
+    const { accessToken, userRole, verify } = useAuthStore();
+    const { setLoading } = useLoadingStore();
+
+    useEffect(() => {
+        const userAuthentication = async () => {
+            try {
+                if (accessToken && userRole) {
+                    await verify();
+                }
+                setLoading(false);
+            } catch (error) {
+                console.error("RoutePaths error:", error);
+            }
+        };
+        userAuthentication();
+    }, [setLoading]);
+
     return (
         <BrowserRouter>
             <Routes>
