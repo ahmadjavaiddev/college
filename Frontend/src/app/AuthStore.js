@@ -58,7 +58,8 @@ export const useAuthStore = create(
                             isAuthenticated: true,
                         });
                     },
-                    null
+                    null,
+                    "Error while verifying user"
                 );
             },
 
