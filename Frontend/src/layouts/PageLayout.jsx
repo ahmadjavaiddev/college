@@ -16,7 +16,7 @@ const PageLayout = () => {
                     <SidebarTrigger className="-ml-1" />
                 </header>
                 <main className="flex flex-1 flex-col gap-4 p-0">
-                    <ToastProvider>
+                    <ToastProvider duration={3000}>
                         <Outlet />
                     </ToastProvider>
                 </main>
