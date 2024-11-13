@@ -100,8 +100,7 @@ const getSections = async () => {
 };
 
 const updateLecture = async (lectureId, lecture) => {
-    const response = await apiClient.put(`/lectures/${lectureId}`, lecture);
-    return response.data.data.lecture;
+    return apiClient.put(`/lectures/${lectureId}`, lecture);
 };
 
 const addNewLecture = async (sectionId, data) => {
@@ -109,15 +108,7 @@ const addNewLecture = async (sectionId, data) => {
 };
 
 const updateSectionLectures = async (sectionId, lectures) => {
-    try {
-        const response = await apiClient.put(
-            `/lectures/sections/${sectionId}`,
-            lectures
-        );
-        return response.data.data.lectures;
-    } catch (error) {
-        console.log("Error :: API :: updateSectionLectures ::", error.message);
-    }
+    return apiClient.put(`/lectures/sections/${sectionId}`, lectures);
 };
 
 const deleteLecture = async (lectureId) => {
