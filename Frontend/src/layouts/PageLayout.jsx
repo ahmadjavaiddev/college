@@ -5,6 +5,7 @@ import {
     SidebarTrigger,
 } from "@/components/ui/index";
 import Sidebar from "../components/Admin/Sidebar";
+import ToastProvider from "../components/Admin/ToastProvider";
 
 const PageLayout = () => {
     return (
@@ -15,7 +16,9 @@ const PageLayout = () => {
                     <SidebarTrigger className="-ml-1" />
                 </header>
                 <main className="flex flex-1 flex-col gap-4 p-0">
-                    <Outlet />
+                    <ToastProvider>
+                        <Outlet />
+                    </ToastProvider>
                 </main>
             </SidebarInset>
         </SidebarProvider>
