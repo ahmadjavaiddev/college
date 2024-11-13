@@ -195,7 +195,7 @@ const updateSectionLectures = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(
                 200,
-                { lectures: updatedLectures },
+                { lectures: updatedLectures, success: true },
                 "Lectures Updated Successfully!"
             )
         );
