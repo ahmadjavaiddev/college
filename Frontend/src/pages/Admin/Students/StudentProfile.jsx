@@ -7,8 +7,7 @@ import { LectureCard } from "../../../components/Admin/LectureCard";
 import ResultCard from "../../../components/Admin/ResultCard";
 import { StudentProgressChart } from "../../../components/Admin/StudentProgressChart";
 import StudentAttendance from "../../../components/Admin/StudentAttendance";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useLoaderData } from "react-router-dom";
 import { getStudentData } from "../../../api";
 
 const recentTests = [
@@ -19,40 +18,7 @@ const recentTests = [
 ];
 
 export default function StudentProfile() {
-    const { userId } = useParams();
-    // const setStudent = useStudentProfileStore((state) => state.setStudent);
-    // const student = useStudentProfileStore((state) => state.student);
-    const [student, setStudent] = useState({});
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const response = await getStudentData(
-                    userId.length < 10 ? "6712d9fecc8491a7a477ae6a" : userId
-                );
-                console.log("response ::", response);
-                setStudent(response);
-            } catch (error) {
-                console.log("Error :: useEffect ::", error);
-            }
-        })();
-
-        // setStudent({
-        //     id: "CS001",
-        //     name: "Alice Johnson",
-        //     email: "alice@example.com",
-        //     avatar: "/placeholder.svg?height=128&width=128",
-        //     course: "Computer Science",
-        //     year: "2nd Year",
-        //     attendance: 92,
-        //     recentTests: [
-        //         { subject: "Data Structures", score: 95, maxScore: 100, grade: "A" },
-        //         { subject: "Algorithms", score: 88, maxScore: 100, grade: "B+" },
-        //         { subject: "Database Systems", score: 92, maxScore: 100, grade: "A-" },
-        //         { subject: "Web Development", score: 98, maxScore: 100, grade: "A+" },
-        //     ],
-        // });
-    }, []);
+    const student = useLoaderData();
 
     const LECTURES = [
         {
@@ -105,8 +71,13 @@ export default function StudentProfile() {
                 <CardHeader className="pb-4 flex flex-row justify-between items-center">
                     <div className="flex items-center space-x-4 w-[80%]">
                         <Avatar className="w-20 h-20">
-                            <AvatarImage src={student?.image} alt={student?.firstName} />
-                            <AvatarFallback>{student?.firstName?.charAt(0)}</AvatarFallback>
+                            <AvatarImage
+                                src={student?.image}
+                                alt={student?.firstName}
+                            />
+                            <AvatarFallback>
+                                {student?.firstName?.charAt(0)}
+                            </AvatarFallback>
                         </Avatar>
                         <div>
                             <CardTitle className="text-2xl">
@@ -133,9 +104,13 @@ export default function StudentProfile() {
                             }}
                         >
                             <TabsTrigger value="overview">Overview</TabsTrigger>
-                            <TabsTrigger value="attendance">Attendance</TabsTrigger>
+                            <TabsTrigger value="attendance">
+                                Attendance
+                            </TabsTrigger>
                             <TabsTrigger value="lectures">Lectures</TabsTrigger>
-                            <TabsTrigger value="tests">Recent Tests</TabsTrigger>
+                            <TabsTrigger value="tests">
+                                Recent Tests
+                            </TabsTrigger>
                         </TabsList>
                         <TabsContent value="overview" className="mt-6">
                             <ResultCard />
@@ -155,7 +130,10 @@ export default function StudentProfile() {
                                             "Friday",
                                             "Saturday",
                                         ].map((day) => (
-                                            <TabsTrigger value={day.toLowerCase()} key={day}>
+                                            <TabsTrigger
+                                                value={day.toLowerCase()}
+                                                key={day}
+                                            >
                                                 {day}
                                             </TabsTrigger>
                                         ))}
@@ -173,9 +151,14 @@ export default function StudentProfile() {
                                     <TabsContent key={day} value={day}>
                                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 mt-5 mb-3">
                                             {LECTURES.filter(
-                                                (item) => item.day.toLowerCase() === day
+                                                (item) =>
+                                                    item.day.toLowerCase() ===
+                                                    day
                                             ).map((lecture, index) => (
-                                                <LectureCard key={index} {...lecture} />
+                                                <LectureCard
+                                                    key={index}
+                                                    {...lecture}
+                                                />
                                             ))}
                                         </div>
                                     </TabsContent>
@@ -187,7 +170,9 @@ export default function StudentProfile() {
                                 {recentTests?.map((test, index) => (
                                     <Card key={index}>
                                         <CardHeader className="pb-2">
-                                            <CardTitle>{test.subject}</CardTitle>
+                                            <CardTitle>
+                                                {test.subject}
+                                            </CardTitle>
                                         </CardHeader>
                                         <CardContent>
                                             <div className="flex justify-between items-center mb-2">
@@ -199,7 +184,11 @@ export default function StudentProfile() {
                                                 </div>
                                             </div>
                                             <Progress
-                                                value={(test.score / test.maxScore) * 100}
+                                                value={
+                                                    (test.score /
+                                                        test.maxScore) *
+                                                    100
+                                                }
                                                 className="mt-2"
                                             />
                                         </CardContent>
@@ -212,4 +201,9 @@ export default function StudentProfile() {
             </Card>
         </div>
     );
+}
+
+export async function loadStudentData(userId) {
+    const response = await getStudentData(userId);
+    return response;
 }
