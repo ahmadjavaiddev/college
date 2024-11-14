@@ -1,145 +1,107 @@
+import {
+    createBrowserRouter,
+    createRoutesFromElements,
+    Route,
+    RouterProvider,
+} from "react-router-dom";
+import PageLayout from "./layouts/PageLayout";
+import HomePage from "./pages/Home/HomePage";
+import Sections from "./pages/Admin/Sections/Sections";
+import SectionPage from "./pages/Admin/Sections/SectionPage";
+import StudentProfile, {
+    loadStudentData,
+} from "./pages/Admin/Students/StudentProfile";
+import { AddStudent } from "./pages/Admin/Students/AddStudent";
+import Students from "./pages/Admin/Students/Students";
+import AddSection from "./pages/Admin/Sections/AddSection";
+import { Login } from "./pages/Login";
+import AttendanceMarker from "./pages/Admin/Attendance/Attendance";
+import { ProtectedRoute } from "./layouts/ProtectedRoute";
+import TeacherProfile from "./pages/Admin/Teacher/TeacherProfile";
+import { AddTeacher } from "./pages/Admin/Teacher/AddTeacher";
+import Lectures from "./pages/Admin/Lectures/Lectures";
+import { useAuthStore } from "./app/AuthStore";
+import { useLoadingStore } from "./app/LoadingStore";
 import { useEffect } from "react";
-import RoutePaths from "./RoutePaths";
-import { useStudentsStore } from "./app/StudentsStore";
-import { useSectionsStore } from "./app/SectionsStore";
+
+const router = createBrowserRouter(
+    createRoutesFromElements(
+        <Route path="/" element={<PageLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+                path="/teachers/add"
+                element={
+                    <ProtectedRoute role={["ADMIN"]} element={AddTeacher} />
+                }
+            />
+            <Route
+                path="/teachers/:teacherId"
+                element={
+                    <ProtectedRoute role={["ADMIN"]} element={TeacherProfile} />
+                }
+            />
+            <Route
+                path="/sections/:sectionId/attendance/:lectureId"
+                element={<AttendanceMarker />}
+            />
+            <Route path="/sections" element={<Sections />} />
+            <Route
+                path="/sections/:sectionId"
+                element={
+                    <ProtectedRoute role={["ADMIN"]} element={SectionPage} />
+                }
+            />
+            <Route
+                path="/sections/add"
+                element={
+                    <ProtectedRoute role={["ADMIN"]} element={AddSection} />
+                }
+            />
+            <Route
+                path="/lectures"
+                element={<ProtectedRoute role={["ADMIN"]} element={Lectures} />}
+            />
+            <Route
+                path="/students"
+                element={<ProtectedRoute role={["ADMIN"]} element={Students} />}
+            />
+            <Route
+                path="/students/:userId"
+                loader={({ params }) => loadStudentData(params.userId)}
+                element={
+                    <ProtectedRoute role={["ADMIN"]} element={StudentProfile} />
+                }
+            />
+            <Route
+                path="/students/add"
+                element={
+                    <ProtectedRoute role={["ADMIN"]} element={AddStudent} />
+                }
+            />
+        </Route>
+    )
+);
 
 function App() {
-    const addStudents = useStudentsStore((state) => state.addStudents);
-    const addSections = useSectionsStore((state) => state.addSections);
+    const { accessToken, userRole, verify } = useAuthStore();
+    const { setLoading } = useLoadingStore();
 
     useEffect(() => {
-        addSections([
-            {
-                name: "CSB-34",
-                discipline: "Computer Science",
-                year: "2nd Year",
-                classTeacher: "Dr. John Doe",
-                totalStudents: 60,
-                presentStudents: 48,
-                absentStudents: 12,
-            },
-            {
-                name: "CSB-35",
-                discipline: "Computer Science",
-                year: "2nd Year",
-                classTeacher: "Dr. Maxwall",
-                totalStudents: 60,
-                presentStudents: 48,
-                absentStudents: 12,
-            },
-            {
-                name: "CSB-36",
-                discipline: "Computer Science",
-                year: "2nd Year",
-                classTeacher: "Dr. Strange",
-                totalStudents: 60,
-                presentStudents: 48,
-                absentStudents: 12,
-            },
-            {
-                name: "CSB-37",
-                discipline: "Computer Science",
-                year: "2nd Year",
-                classTeacher: "Dr. Banner",
-                totalStudents: 60,
-                presentStudents: 48,
-                absentStudents: 12,
-            },
-        ]);
+        const userAuthentication = async () => {
+            try {
+                if (accessToken && userRole) {
+                    await verify();
+                }
+                setLoading(false);
+            } catch (error) {
+                console.error("RoutePaths error:", error);
+            }
+        };
+        userAuthentication();
+    }, [setLoading]);
 
-        addStudents([
-            {
-                name: "Alice Johnson",
-                email: "alice@example.com",
-                studentId: "CS001",
-                branch: "Computer Science",
-                section: "CSB-34",
-                status: "PRESENT",
-            },
-            {
-                name: "Bob Smith",
-                email: "bob@example.com",
-                studentId: "CS002",
-                branch: "Computer Science",
-                section: "CSB-34",
-                status: "PRESENT",
-            },
-            {
-                name: "Charlie Brown",
-                email: "charlie@example.com",
-                studentId: "CS003",
-                branch: "Computer Science",
-                section: "CSB-34",
-                status: "PRESENT",
-            },
-            {
-                name: "Diana Ross",
-                email: "diana@example.com",
-                studentId: "CS004",
-                branch: "Computer Science",
-                section: "CSB-34",
-                status: "ABSENT",
-            },
-            {
-                name: "Ethan Hunt",
-                email: "ethan@example.com",
-                studentId: "CS005",
-                branch: "Computer Science",
-                section: "CSB-34",
-                status: "ABSENT",
-            },
-            {
-                name: "Fiona Gallagher",
-                email: "fiona@example.com",
-                studentId: "CS006",
-                branch: "Computer Science",
-                section: "CSB-34",
-                status: "ABSENT",
-            },
-            {
-                name: "Alice Johnson",
-                email: "alice@example.com",
-                studentId: "CS001",
-                branch: "Computer Science",
-                section: "CSB-34",
-                status: "PRESENT",
-            },
-            {
-                name: "Bob Smith",
-                email: "bob@example.com",
-                studentId: "CS002",
-                branch: "Computer Science",
-                section: "CSB-35",
-                status: "PRESENT",
-            },
-            {
-                name: "Charlie Brown",
-                email: "charlie@example.com",
-                studentId: "CS003",
-                branch: "Computer Science",
-                section: "CSB-35",
-                status: "ABSENT",
-            },
-            {
-                name: "Diana Ross",
-                email: "diana@example.com",
-                studentId: "CS004",
-                branch: "Computer Science",
-                section: "CSB-35",
-                status: "ABSENT",
-            },
-            {
-                name: "Ethan Hunt",
-                email: "ethan@example.com",
-                studentId: "CS005",
-                branch: "Computer Science",
-                section: "CSB-35",
-                status: "PRESENT",
-            },
-        ]);
-    }, [addSections, addStudents]);
-
-    return <RoutePaths />;
+    return <RouterProvider router={router} />;
 }
 
 export default App;
