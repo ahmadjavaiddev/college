@@ -26,7 +26,7 @@ const sidebarItems = [
     { icon: Grid, label: "Dashboard", url: "/" },
     { icon: File, label: "Lectures", url: "/lectures" },
     { icon: Folder, label: "Sections", url: "/sections" },
-    { icon: File, label: "CSB-34", url: "/sections/6727d3fecee85a1318c96571" },
+    { icon: File, label: "CSB-36", url: "/sections/672d0096c2f41c1e44181dc8" },
     { icon: PlusSquare, label: "Add Section", url: "/sections/add" },
     { icon: UserPlus, label: "Add Teacher", url: "/teachers/add" },
     { icon: UserCheck, label: "Teacher", url: "/teachers/233401" },
