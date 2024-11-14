@@ -55,7 +55,6 @@ const getSection = asyncHandler(async (req, res) => {
                 localField: "incharge",
                 foreignField: "_id",
                 as: "incharge",
-                pipeline: [{ $project: { name: 1 } }],
             },
         },
         {
@@ -67,7 +66,6 @@ const getSection = asyncHandler(async (req, res) => {
                 localField: "branch",
                 foreignField: "_id",
                 as: "branch",
-                pipeline: [{ $project: { name: 1 } }],
             },
         },
         {
@@ -76,14 +74,14 @@ const getSection = asyncHandler(async (req, res) => {
         {
             $project: {
                 name: 1,
-                incharge: { name: 1 },
+                incharge: { firstName: 1, lastName: 1 },
                 branch: { name: 1 },
             },
         },
     ]);
 
-    if (!section) {
-        throw new ApiError(401, "Section not found!");
+    if (section.length === 0) {
+        throw new ApiError(404, "Section not found!");
     }
 
     return res
