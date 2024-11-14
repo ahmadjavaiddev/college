@@ -165,7 +165,6 @@ const getSectionStudents = asyncHandler(async (req, res) => {
                 localField: "section",
                 foreignField: "_id",
                 as: "section",
-                pipeline: [{ $project: { name: 1 } }],
             },
         },
         {
@@ -180,7 +179,6 @@ const getSectionStudents = asyncHandler(async (req, res) => {
                 localField: "year",
                 foreignField: "_id",
                 as: "year",
-                pipeline: [{ $project: { name: 1 } }],
             },
         },
         {
@@ -189,25 +187,25 @@ const getSectionStudents = asyncHandler(async (req, res) => {
                 preserveNullAndEmptyArrays: true,
             },
         },
-        {
-            $lookup: {
-                from: "attendances",
-                localField: "_id",
-                foreignField: "studentId",
-                as: "attendance",
-                pipeline: [
-                    {
-                        $project: { records: 1 },
-                    },
-                ],
-            },
-        },
-        {
-            $unwind: {
-                path: "$attendance",
-                preserveNullAndEmptyArrays: true,
-            },
-        },
+        // {
+        //     $lookup: {
+        //         from: "attendances",
+        //         localField: "_id",
+        //         foreignField: "studentId",
+        //         as: "attendance",
+        //         pipeline: [
+        //             {
+        //                 $project: { records: 1 },
+        //             },
+        //         ],
+        //     },
+        // },
+        // {
+        //     $unwind: {
+        //         path: "$attendance",
+        //         preserveNullAndEmptyArrays: true,
+        //     },
+        // },
         {
             $project: {
                 firstName: 1,
@@ -220,13 +218,13 @@ const getSectionStudents = asyncHandler(async (req, res) => {
                 year: {
                     name: 1,
                 },
-                attendance: 1,
+                // attendance: 1,
             },
         },
     ]);
 
     if (!students || students.length === 0) {
-        throw new ApiError(401, "Students not found!");
+        throw new ApiError(404, "Students not found!");
     }
 
     const formattedStudents = students.map((student) => {
