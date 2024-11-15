@@ -30,7 +30,13 @@ export class LocalStorage {
     }
 }
 
-export const requestHandler = async (api, onSuccess, message, errorMessage) => {
+export const requestHandler = async (
+    api,
+    onSuccess,
+    onError,
+    message,
+    errorMessage
+) => {
     try {
         // Make the API request
         const response = await api();
@@ -54,5 +60,7 @@ export const requestHandler = async (api, onSuccess, message, errorMessage) => {
                 errorMessage ? errorMessage : "SomeThing went wrong!"
             }.`,
         });
+
+        onError && onError(error);
     }
 };

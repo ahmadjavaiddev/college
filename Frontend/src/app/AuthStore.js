@@ -49,13 +49,21 @@ export const useAuthStore = create(
             userRole: getRole(),
             isAuthenticated: !!getToken(),
             verify: async () => {
-                requestHandler(
+                await requestHandler(
                     async () => await verifyUser(),
                     (res) => {
                         set({
                             user: res.user,
                             role: res.user.role,
                             isAuthenticated: true,
+                        });
+                    },
+                    () => {
+                        set({
+                            isAuthenticated: false,
+                            user: null,
+                            role: null,
+                            accessToken: null,
                         });
                     },
                     null,
