@@ -23,6 +23,7 @@ import Lectures from "./pages/Admin/Lectures/Lectures";
 import { useAuthStore } from "./app/AuthStore";
 import { useLoadingStore } from "./app/LoadingStore";
 import { useEffect } from "react";
+import { StudentError } from "./components/Admin/Students/Error";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -67,11 +68,12 @@ const router = createBrowserRouter(
                 element={<ProtectedRoute role={["ADMIN"]} element={Students} />}
             />
             <Route
-                path="/students/:userId"
-                loader={({ params }) => loadStudentData(params.userId)}
+                path="/students/:studentId"
+                loader={({ params }) => loadStudentData(params.studentId)}
                 element={
                     <ProtectedRoute role={["ADMIN"]} element={StudentProfile} />
                 }
+                errorElement={<StudentError />}
             />
             <Route
                 path="/students/add"
