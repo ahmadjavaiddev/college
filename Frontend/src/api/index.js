@@ -66,8 +66,7 @@ const getExistingStudents = async () => {
 };
 
 const getStudentData = async (userId) => {
-    const response = await apiClient.get(`/students/${userId}`);
-    return response.data.data.user;
+    return apiClient.get(`/students/${userId}`);
 };
 
 const getLectureData = async (sectionId) => {
