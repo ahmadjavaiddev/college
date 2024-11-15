@@ -42,7 +42,8 @@ export const requestHandler = async (api, onSuccess, message, errorMessage) => {
         }
     } catch (error) {
         // Handle error cases, including unauthorized and forbidden cases
-        if ([401, 403].includes(error?.response.data?.statusCode)) {
+        console.error("requestHandler :: Error ::", error);
+        if ([401, 403].includes(error?.response?.data?.statusCode)) {
             localStorage.clear(); // Clear local storage on authentication issues
             window.location.href = "/login"; // Redirect to login page
         }
