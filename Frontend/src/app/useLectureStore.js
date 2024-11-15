@@ -41,7 +41,7 @@ const useLectureStore = create((set, get) => ({
                 return;
             }
 
-            requestHandler(
+            await requestHandler(
                 async () => await getSectionLectures(sectionId),
                 (res) => {
                     const response = res.lectures;
@@ -50,6 +50,12 @@ const useLectureStore = create((set, get) => ({
                         error: null,
                         newArrangment: [],
                         showChangesButton: false,
+                        loading: { lectures: false },
+                    });
+                },
+                () => {
+                    set({
+                        lectures: null,
                         loading: { lectures: false },
                     });
                 },
@@ -64,12 +70,19 @@ const useLectureStore = create((set, get) => ({
     // Fetch sections with lectures
     fetchSections: async () => {
         set({ loading: { ...get().loading, sections: true } });
-        requestHandler(
+
+        await requestHandler(
             async () => await getSections(),
             (res) => {
                 set({
                     sections: res.sections,
                     error: null,
+                    loading: { sections: false },
+                });
+            },
+            () => {
+                set({
+                    sections: null,
                     loading: { sections: false },
                 });
             },
@@ -81,7 +94,8 @@ const useLectureStore = create((set, get) => ({
     updateLectures: async (lectures) => {
         const state = get();
         set({ loading: { lectures: true } });
-        requestHandler(
+
+        await requestHandler(
             async () =>
                 await updateSectionLectures(state.selectedSection, lectures),
             (res) => {
@@ -104,6 +118,11 @@ const useLectureStore = create((set, get) => ({
                     });
                 }
             },
+            () => {
+                set({
+                    loading: { sections: false },
+                });
+            },
             "Lectures Updated Successfully!",
             "Error while updating lectures"
         );
@@ -112,7 +131,7 @@ const useLectureStore = create((set, get) => ({
     updateOneLecture: async () => {
         const state = get();
         set({ loading: { lectures: true } });
-        requestHandler(
+        await requestHandler(
             async () =>
                 await updateLecture(
                     state.editingLecture._id,
@@ -135,6 +154,11 @@ const useLectureStore = create((set, get) => ({
                     });
                 }
             },
+            () => {
+                set({
+                    loading: { lectures: false },
+                });
+            },
             "Lecture Updated Successfully!",
             "Error while updating lecture"
         );
@@ -142,7 +166,7 @@ const useLectureStore = create((set, get) => ({
 
     deleteLecture: async (lectureId) => {
         const state = get();
-        requestHandler(
+        await requestHandler(
             async () => await deleteLectureApi(lectureId),
             (response) => {
                 if (response.success && response.lectureId) {
@@ -152,13 +176,14 @@ const useLectureStore = create((set, get) => ({
                     set({ lectures: updatedLectures });
                 }
             },
+            null,
             "Lecture Deleted Successfully!",
             "Error while deleting lecture"
         );
     },
 
     fetchTeacherFormData: async () => {
-        requestHandler(
+        await requestHandler(
             async () => await getTeachersFormData(),
             (res) => {
                 set({ teachersFormData: res.teachers });
@@ -167,7 +192,7 @@ const useLectureStore = create((set, get) => ({
     },
 
     addNewLecture: async (data) => {
-        requestHandler(
+        await requestHandler(
             async () => await addNewLectureApi(get().selectedSection, data),
             (response) => {
                 if (response.success) {
