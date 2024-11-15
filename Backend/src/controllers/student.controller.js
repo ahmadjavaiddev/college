@@ -131,7 +131,7 @@ const getStudent = asyncHandler(async (req, res) => {
         },
     ]);
 
-    if (!user) {
+    if (!user || user.length === 0) {
         throw new ApiError(404, "Student not found!");
     }
 
