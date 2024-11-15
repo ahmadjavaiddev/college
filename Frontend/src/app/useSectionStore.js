@@ -4,67 +4,153 @@ import {
     getSectionStudents,
     getSectionLectures,
 } from "../api";
+import { requestHandler } from "../utils";
 
-const useSectionStore = create((set) => ({
-    // State
-    sectionDetails: null,
-    students: [],
-    lectures: [],
+const useSectionStore = create((set, get) => ({
+    allStudents: [],
+    allLectures: [],
+    allSectionDetails: [],
+    sectionDetails: {},
+    sectionLectures: [],
+    sectionStudents: [],
+    sectionId: "",
     loading: {
         section: true,
         students: true,
         lectures: true,
     },
+    searchQuery: "",
+    searchError: "",
+    noResults: false,
+    searchedStudents: [],
+    studentsStatus: "",
+    searchBy: "",
 
     // Actions
     fetchSectionData: async (sectionId) => {
         try {
-            set({ loading: { section: true, students: true, lectures: true } });
-
-            const [sectionResponse, studentsResponse, lecturesResponse] =
-                await Promise.all([
-                    getSectionDetails(sectionId),
-                    getSectionStudents(sectionId),
-                    getSectionLectures(sectionId),
-                ]);
-            console.log("sectionResponse ::", sectionResponse);
-            console.log("studentsResponse ::", studentsResponse);
-            console.log(
-                "lecturesResponse ::",
-                lecturesResponse.data.data.lectures
-            );
-            // const modifiedDetails = {
-            //     ...sectionResponse,
-            //     attendanceDetails: studentsResponse.attendanceDetails,
-            // };
-
             set({
-                sectionDetails: sectionResponse,
-                students: studentsResponse.students,
-                lectures: lecturesResponse.data.data.lectures,
-                loading: { section: false, students: false, lectures: false },
+                loading: { section: true, students: true },
+                sectionId: sectionId,
             });
+            const state = get();
+
+            const sectionInState = state.allSectionDetails.find(
+                (section) => section._id === sectionId
+            );
+            const sectionStudentsInState = state.allStudents.filter(
+                (student) => student.section === sectionInState?.name
+            );
+
+            // Check if data is already in state
+            if (sectionInState && sectionStudentsInState.length) {
+                console.log("Section data already in state...");
+                set({
+                    sectionDetails: sectionInState,
+                    sectionStudents: sectionStudentsInState,
+                    loading: {
+                        section: false,
+                        students: false,
+                    },
+                });
+                return;
+            }
+
+            console.log("Fetching section data from API...");
+
+            const [sectionResponse, studentsResponse] = await Promise.all([
+                getSectionDetails(sectionId),
+                getSectionStudents(sectionId),
+            ]);
+
+            const modifiedDetails = {
+                ...sectionResponse,
+                attendanceDetails: studentsResponse.attendanceDetails,
+            };
+
+            // Use spread operator directly in set
+            set((prev) => ({
+                allStudents: [
+                    ...prev.allStudents,
+                    ...studentsResponse.students,
+                ],
+                allSectionDetails: [...prev.allSectionDetails, modifiedDetails],
+                sectionDetails: modifiedDetails,
+                sectionStudents: studentsResponse.students,
+                loading: { section: false, students: false },
+            }));
         } catch (error) {
             console.error("Error fetching section data:", error);
             set({
-                loading: { section: false, students: false, lectures: false },
+                loading: { section: false, students: false },
             });
         }
     },
 
-    searchStudents: (query, searchBy, studentsList) => {
-        if (!query || !searchBy || !studentsList?.length) return [];
+    fetchSectionLectures: async () => {
+        try {
+            set({ loading: { lectures: true } });
+            const state = get();
+
+            // Combine filtering into a single check
+            const sectionLecturesInState = state.allLectures.filter(
+                (lecture) => lecture.section === state.sectionId
+            );
+
+            // Check if data is already in state
+            if (sectionLecturesInState.length > 0) {
+                console.log("Section Lectures already in state :)");
+                set({
+                    sectionLectures: sectionLecturesInState,
+                    loading: { lectures: false },
+                });
+                return;
+            }
+
+            console.log("Fetching Section Lectures data from API...");
+
+            requestHandler(
+                async () => await getSectionLectures(state.sectionId),
+                (res) => {
+                    set((prev) => ({
+                        allLectures: [...prev.allLectures, ...res.lectures],
+                        sectionLectures: res.lectures,
+                        loading: { lectures: false },
+                    }));
+                },
+                () => {
+                    set({
+                        sectionLectures: null,
+                        loading: { lectures: false },
+                    });
+                }
+            );
+        } catch (error) {
+            console.error("Error fetching section lectures:", error);
+            set({ loading: { lectures: false } });
+        }
+    },
+
+    searchStudents: (query, searchBy) => {
+        const state = get();
+        if (!query || !searchBy || !state.sectionStudents?.length) return [];
 
         const normalizedQuery = query.toLowerCase().trim();
 
-        return studentsList.filter((student) => {
+        const filteredStudents = state.sectionStudents.filter((student) => {
             const fieldValue = student[searchBy]?.toLowerCase() || "";
             return fieldValue.includes(normalizedQuery);
         });
+
+        set({
+            searchedStudents: filteredStudents,
+            noResults: !filteredStudents.length > 0,
+        });
     },
 
-    filterByStatus: (status, studentsList) => {
-        return studentsList.filter(
+    filterByStatus: (status) => {
+        const state = get();
+        return state.sectionStudents.filter(
             (student) => student.status.toUpperCase() === status.toUpperCase()
         );
     },
