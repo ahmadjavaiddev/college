@@ -8,7 +8,7 @@ import ResultCard from "../../../components/Admin/ResultCard";
 import { StudentProgressChart } from "../../../components/Admin/StudentProgressChart";
 import StudentAttendance from "../../../components/Admin/StudentAttendance";
 import { useLoaderData } from "react-router-dom";
-import { getStudentData } from "../../../api";
+import { useStudentProfileStore } from "../../../app/StudentProfileStore";
 
 const recentTests = [
     { subject: "Data Structures", score: 95, maxScore: 100, grade: "A" },
@@ -203,7 +203,10 @@ export default function StudentProfile() {
     );
 }
 
-export async function loadStudentData(userId) {
-    const response = await getStudentData(userId);
-    return response;
+export async function loadStudentData(studentId) {
+    const { fetchStudent } = useStudentProfileStore.getState();
+    const response = await fetchStudent(studentId);
+    if (response) {
+        return response;
+    }
 }
