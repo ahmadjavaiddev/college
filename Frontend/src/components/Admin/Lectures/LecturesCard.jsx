@@ -139,14 +139,15 @@ const LecturesCard = () => {
                                                 ))}
                                             {provided.placeholder}
                                             <Button
-                                                variant="outline"
-                                                className={`w-full text-center rounded-md border-2 border-dashed border-blue-600 bg-background shadow-sm`}
+                                                variant="ghost"
+                                                className="w-full border-2 border-dashed"
                                                 onClick={() => {
                                                     setShowAddLectureForm(true);
                                                     setAddLectureDay(day);
                                                 }}
                                             >
-                                                <Plus className="w-4 h-4 text-blue-600" />
+                                                <Plus className="mr-2 h-4 w-4" />
+                                                Add Lecture
                                             </Button>
                                         </div>
                                     )}

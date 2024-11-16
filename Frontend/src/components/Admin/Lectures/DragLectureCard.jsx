@@ -30,13 +30,14 @@ const DragLectureCard = ({ lecture, index }) => {
                     className={`mb-2`}
                 >
                     <div
+                        // className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex items-center justify-between group hover:shadow-md transition-shadow"
                         className={`${
                             lecture._id === editingLecture?._id
                                 ? "bg-black text-white"
                                 : " hover:bg-accent hover:text-accent-foreground"
                         } w-full flex justify-between items-center px-2 py-1 mr-3 rounded-md border border-input bg-background shadow-sm`}
                     >
-                        <span>
+                        <span className="flex items-center">
                             <Button
                                 variant="outline"
                                 className="h-8 rounded-md text-xs px-2 mr-2 -ml-1"
