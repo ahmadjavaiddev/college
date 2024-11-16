@@ -94,6 +94,10 @@ const getTeachersFormData = async () => {
     return apiClient.get("/random/teachers/form");
 };
 
+const getSectionsWithDetails = async () => {
+    return apiClient.get("/sections/names");
+};
+
 const getSections = async () => {
     return apiClient.get("/sections");
 };
@@ -128,6 +132,7 @@ export {
     submitAttendance,
     addTeacherRequest,
     getTeachersFormData,
+    getSectionsWithDetails,
     getSections,
     updateLecture,
     addNewLecture,
