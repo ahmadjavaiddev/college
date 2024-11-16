@@ -1,12 +1,12 @@
 import { create } from "zustand";
 import {
     getSectionLectures,
-    getSections,
     updateSectionLectures,
     deleteLecture as deleteLectureApi,
     getTeachersFormData,
     addNewLecture as addNewLectureApi,
     updateLecture,
+    getSectionsWithDetails,
 } from "../api";
 import { requestHandler } from "../utils";
 
@@ -27,7 +27,11 @@ const useLectureStore = create((set, get) => ({
 
     fetchLectures: async (sectionId) => {
         try {
-            set((state) => ({ loading: { ...state.loading, lectures: true } }));
+            set((state) => ({
+                loading: { ...state.loading, lectures: true },
+                selectedLecture: "",
+                editingLecture: {},
+            }));
 
             const sectionLecturesInState = get()?.lectures?.filter(
                 (lecture) => lecture.section === sectionId
@@ -71,8 +75,14 @@ const useLectureStore = create((set, get) => ({
     fetchSections: async () => {
         set({ loading: { ...get().loading, sections: true } });
 
+        const state = get();
+        if (state.sections.length > 0) {
+            set({ loading: { sections: false } });
+            return;
+        }
+
         await requestHandler(
-            async () => await getSections(),
+            async () => await getSectionsWithDetails(),
             (res) => {
                 set({
                     sections: res.sections,
