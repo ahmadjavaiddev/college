@@ -1,66 +1,58 @@
-import { SectionCard } from "../../../components/Admin/SectionCard";
+import { SectionCard } from "@/components/Admin/Sections/SectionCard";
 import {
     CardTitle,
     CardDescription,
     Input,
     Button,
 } from "@/components/ui/index.js";
-// import { Input } from "@/components/ui/Input";
-// import { Button } from "@/components/ui/Button";
-// import { UserCard } from "../../components/Admin/UserCard";
-
-const sections = [
-    {
-        name: "CSB-25",
-        email: "alice.johnson@example.com",
-        branch: "Computer Science",
-        section: "CS-A",
-        sectionId: "CS001",
-        avatarUrl: "/placeholder.svg?height=40&width=40",
-    },
-    {
-        name: "CSB-24",
-        email: "bob.smith@example.com",
-        branch: "Electrical Engineering",
-        section: "EE-B",
-        sectionId: "EE001",
-        avatarUrl: "/placeholder.svg?height=40&width=40",
-    },
-    {
-        name: "CSB-30",
-        email: "charlie.brown@example.com",
-        branch: "Mechanical Engineering",
-        section: "ME-C",
-        sectionId: "ME001",
-        avatarUrl: "/placeholder.svg?height=40&width=40",
-    },
-    {
-        name: "CSB-35",
-        email: "diana.ross@example.com",
-        branch: "Computer Science",
-        section: "CS-B",
-        sectionId: "CS002",
-        avatarUrl: "/placeholder.svg?height=40&width=40",
-    },
-    {
-        name: "CSB-34",
-        email: "ethan.hunt@example.com",
-        branch: "Electrical Engineering",
-        section: "EE-A",
-        sectionId: "EE002",
-        avatarUrl: "/placeholder.svg?height=40&width=40",
-    },
-    {
-        name: "CSB-38",
-        email: "fiona.gallagher@example.com",
-        branch: "Mechanical Engineering",
-        section: "ME-B",
-        sectionId: "ME002",
-        avatarUrl: "/placeholder.svg?height=40&width=40",
-    },
-];
+import useSectionsStore from "@/app/useSectionsStore";
+import { useEffect, useState } from "react";
+import useSectionStore from "../../../app/useSectionStore";
 
 const Sections = () => {
+    const {
+        sections,
+        loading,
+        fetchSections,
+        searchError,
+        noResults,
+        searchSections,
+        searchedSections,
+    } = useSectionsStore();
+    const [query, setQuery] = useState("");
+
+    useEffect(() => {
+        useSectionStore.setState({
+            sectionDetails: {},
+            sectionLectures: [],
+            sectionStudents: [],
+        });
+        if (sections.length === 0) {
+            fetchSections();
+        }
+    }, [sections]);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-96">
+                <p className="text-lg font-semibold">Loading...</p>
+            </div>
+        );
+    }
+
+    const handleSearch = () => {
+        console.log("Searching for sections...");
+        useSectionsStore.setState({
+            searchedSections: [],
+            searchError: "",
+        });
+        if (query.trim() === "") {
+            setQuery("");
+            return;
+        }
+        searchSections(query);
+    };
+
     return (
         <div className="px-10 py-8">
             <div className="flex justify-between mb-7">
@@ -72,8 +64,16 @@ const Sections = () => {
                 </div>
                 <div>
                     <div className="flex w-full max-w-sm items-center space-x-2">
-                        <Input type="text" placeholder="Search" />
-                        <Button size="sm" type="submit">
+                        <Input
+                            type="text"
+                            placeholder="Search"
+                            onChange={(e) => setQuery(e.target.value)}
+                        />
+                        <Button
+                            size="sm"
+                            type="submit"
+                            onClick={() => handleSearch()}
+                        >
                             Search
                         </Button>
                         <Button size="sm" type="submit">
@@ -82,11 +82,36 @@ const Sections = () => {
                     </div>
                 </div>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-5">
-                {sections.map((section) => (
-                    <SectionCard key={section.sectionId} {...section} />
-                ))}
-            </div>
+
+            {searchError && noResults && (
+                <div className="text-red-500 text-lg mb-3">{searchError}</div>
+            )}
+
+            {query.trim() !== "" && searchedSections.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {searchedSections.map((section, index) => (
+                        <SectionCard
+                            key={section._id}
+                            section={section}
+                            index={index}
+                        />
+                    ))}
+                </div>
+            ) : sections.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {sections.map((section, index) => (
+                        <SectionCard
+                            key={section._id}
+                            section={section}
+                            index={index}
+                        />
+                    ))}
+                </div>
+            ) : (
+                <div className="flex justify-center items-center h-96 text-lg font-semibold">
+                    No Sections found!
+                </div>
+            )}
         </div>
     );
 };
