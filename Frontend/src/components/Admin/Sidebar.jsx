@@ -1,15 +1,14 @@
 import { NavLink } from "react-router-dom";
 import {
-    Grid,
     Folder,
-    File,
     PlusSquare,
     UserPlus,
-    UserCheck,
     Users,
-    User,
-    CheckSquare,
     LogIn,
+    LayoutDashboard,
+    BookOpen,
+    GraduationCap,
+    ClipboardList,
 } from "lucide-react";
 import {
     SidebarGroup,
@@ -23,18 +22,16 @@ import {
 } from "@/components/ui/index";
 
 const sidebarItems = [
-    { icon: Grid, label: "Dashboard", url: "/" },
-    { icon: File, label: "Lectures", url: "/lectures" },
+    { icon: LayoutDashboard, label: "Dashboard", url: "/" },
+    { icon: BookOpen, label: "Lectures", url: "/lectures" },
     { icon: Folder, label: "Sections", url: "/sections" },
-    { icon: File, label: "CSB-36", url: "/sections/672d0096c2f41c1e44181dc8" },
     { icon: PlusSquare, label: "Add Section", url: "/sections/add" },
     { icon: UserPlus, label: "Add Teacher", url: "/teachers/add" },
-    { icon: UserCheck, label: "Teacher", url: "/teachers/233401" },
+    { icon: GraduationCap, label: "Teacher", url: "/teachers/233401" },
     { icon: Users, label: "Students", url: "/students" },
-    { icon: User, label: "Student", url: "/students/233401" },
     { icon: UserPlus, label: "Add Student", url: "/students/add" },
     {
-        icon: CheckSquare,
+        icon: ClipboardList,
         label: "Attendance",
         url: "/sections/66ffd8503e20756aec48195a/attendance/123",
     },
