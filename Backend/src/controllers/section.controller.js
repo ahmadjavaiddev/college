@@ -95,7 +95,49 @@ const getSection = asyncHandler(async (req, res) => {
         );
 });
 
-const getAllSections = asyncHandler(async (req, res) => {
+const getSections = asyncHandler(async (req, res) => {
+    const sections = await Section.aggregate([
+        {
+            $match: {
+                branch: new mongoose.Types.ObjectId("6727d2f811a3e00c11906416"),
+            },
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "incharge",
+                foreignField: "_id",
+                as: "incharge",
+            },
+        },
+        {
+            $unwind: "$incharge",
+        },
+        {
+            $project: {
+                name: 1,
+                incharge: { firstName: 1, lastName: 1 },
+                students: { $size: "$students" },
+            },
+        },
+    ]);
+    console.log("Sections ::", sections);
+    if (!sections || sections.length === 0) {
+        throw new ApiError(401, "No sections found!");
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                { sections },
+                "Sections with lectures fetched successfully!"
+            )
+        );
+});
+
+const getAllSectionsWithNames = asyncHandler(async (req, res) => {
     const sections = await Section.find({
         branch: "6727d2f811a3e00c11906416",
     }).select("name");
@@ -172,7 +214,8 @@ const updateSection = asyncHandler(async (req, res) => {
 export {
     addSection,
     getSection,
-    getAllSections,
+    getSections,
+    getAllSectionsWithNames,
     getSectionsIds,
     updateSection,
 };

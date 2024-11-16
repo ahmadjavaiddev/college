@@ -1,7 +1,9 @@
 import {
     addSection,
-    getAllSections,
+    // getAllSections,
+    getAllSectionsWithNames,
     getSection,
+    getSections,
     getSectionsIds,
     updateSection,
 } from "../controllers/section.controller.js";
@@ -14,6 +16,15 @@ import {
 const router = express.Router();
 
 router.post("/add", verifyJWTUser, verifyUserRole(["ADMIN"]), addSection);
+
+router.get("/", verifyJWTUser, verifyUserRole(["ADMIN"]), getSections);
+router.get(
+    "/names",
+    verifyJWTUser,
+    verifyUserRole(["ADMIN"]),
+    getAllSectionsWithNames
+);
+
 router
     .route("/:sectionId")
     .get(
@@ -27,6 +38,5 @@ router
         updateSection
     );
 router.get("/ids", verifyJWTUser, verifyUserRole(["ADMIN"]), getSectionsIds);
-router.get("/", verifyJWTUser, verifyUserRole(["ADMIN"]), getAllSections);
 
 export { router as sectionRouter };
