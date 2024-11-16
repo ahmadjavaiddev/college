@@ -12,11 +12,20 @@ import { useParams } from "react-router-dom";
 
 const SectionLectures = () => {
     const { sectionId } = useParams();
-    const { sectionLectures, fetchSectionLectures } = useSectionStore();
+    const { sectionLectures, fetchSectionLectures, loading } =
+        useSectionStore();
 
     useEffect(() => {
         fetchSectionLectures();
     }, [sectionId]);
+
+    if (sectionLectures.length === 0) {
+        return (
+            <div className="min-h-80 flex justify-center items-center">
+                No lectures found
+            </div>
+        );
+    }
 
     return (
         <Tabs defaultValue="monday">
@@ -52,15 +61,21 @@ const SectionLectures = () => {
                         transition={{ duration: 0.3 }}
                         className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5 mb-3"
                     >
-                        {sectionLectures
-                            ?.filter((item) => item.day.toLowerCase() === day)
-                            ?.map((lecture) => (
-                                <LectureCard
-                                    key={lecture?._id}
-                                    lecture={lecture}
-                                    sectionId={sectionId}
-                                />
-                            ))}
+                        {loading.lectures ? (
+                            <div>Loading...</div>
+                        ) : (
+                            sectionLectures
+                                ?.filter(
+                                    (item) => item.day.toLowerCase() === day
+                                )
+                                ?.map((lecture) => (
+                                    <LectureCard
+                                        key={lecture?._id}
+                                        lecture={lecture}
+                                        sectionId={sectionId}
+                                    />
+                                ))
+                        )}
                     </motion.div>
                 </TabsContent>
             ))}
