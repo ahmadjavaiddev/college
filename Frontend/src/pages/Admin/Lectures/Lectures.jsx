@@ -10,6 +10,7 @@ import {
 import useLectureStore from "@/app/useLectureStore";
 import LecturesCard from "@/components/Admin/Lectures/LecturesCard";
 import EditLecture from "@/components/Admin/Lectures/EditLecture";
+import { GraduationCap } from "lucide-react";
 
 export default function Lectures() {
     const {
@@ -70,6 +71,7 @@ export default function Lectures() {
                                         handleSectionSelect(section?._id);
                                     }}
                                 >
+                                    <GraduationCap className="mr-2 h-4 w-4" />
                                     {section?.name}
                                 </Button>
                             ))
