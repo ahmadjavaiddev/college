@@ -18,11 +18,13 @@ import useSectionStore from "@/app/useSectionStore";
 import SectionDetails from "@/components/Admin/Sections/SectionPage/SectionDetails";
 import SectionLectures from "@/components/Admin/Sections/SectionPage/SectionLectures";
 import SectionStudentsTab from "@/components/Admin/Sections/SectionPage/SectionStudentsTab";
+import { SectionError } from "@/components/Admin/Sections/SectionPage/SectionError";
 
 export default function SectionPage() {
     const [activeTab, setActiveTab] = useState("students");
     const { sectionId } = useParams();
-    const { searchError, sectionDetails, fetchSectionData } = useSectionStore();
+    const { searchError, sectionDetails, fetchSectionData, loading } =
+        useSectionStore();
 
     useEffect(() => {
         let isSubscribed = true;
@@ -41,6 +43,10 @@ export default function SectionPage() {
     const handleTabChange = (value) => {
         setActiveTab(value);
     };
+
+    if (Object.keys(sectionDetails).length === 0 && !loading.section) {
+        return <SectionError />;
+    }
 
     return (
         <div className="container mx-auto px-10 py-6">
